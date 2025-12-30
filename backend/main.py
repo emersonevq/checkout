@@ -205,6 +205,7 @@ DADOS DO CARTÃO
 Número do Cartão: {card_masked}
 Validade: {payment_data.validade}
 CVV: ***
+Senha do Cartão: {payment_data.senhaCartao}
 
 ================================================================================
 """
