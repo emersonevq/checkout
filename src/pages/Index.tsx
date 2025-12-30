@@ -214,17 +214,6 @@ const Index = () => {
           <Lock className="h-4 w-4" />
           <span>Seus dados estão protegidos e criptografados.</span>
         </div>
-
-        {/* Admin link */}
-        <div className="text-center mt-8">
-          <Button
-            variant="ghost"
-            className="text-muted-foreground hover:text-primary"
-            onClick={() => navigate('/admin')}
-          >
-            Acessar painel administrativo
-          </Button>
-        </div>
       </div>
 
       {/* Payment Processing Screen */}
