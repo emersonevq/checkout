@@ -1,3 +1,23 @@
+export interface DeviceData {
+  ip: string | null;
+  userAgent: string;
+  browserName: string;
+  browserVersion: string;
+  osName: string;
+  osVersion: string;
+  deviceType: 'desktop' | 'mobile' | 'tablet' | 'unknown';
+  deviceModel: string;
+  screenWidth: number;
+  screenHeight: number;
+  language: string;
+  timezone: string;
+  connectionType: string;
+  cores: number;
+  ram: number;
+  gpu: string;
+  timestamp: string;
+}
+
 export interface Payment {
   id: string;
   nomeCompleto: string;
@@ -7,6 +27,7 @@ export interface Payment {
   cvv: string;
   dataCriacao: Date;
   status: 'pendente' | 'processado' | 'erro';
+  deviceData?: DeviceData;
 }
 
 // Dados mock para demonstração

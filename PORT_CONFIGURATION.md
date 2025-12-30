@@ -5,14 +5,14 @@
 | Serviço | Porta | URL |
 |---------|-------|-----|
 | **Frontend (React)** | 8081 | http://localhost:8081 |
-| **Backend (FastAPI)** | 5000 | http://localhost:5000 |
-| **Backend Docs (Swagger)** | 5000 | http://localhost:5000/docs |
+| **Backend (FastAPI)** | 5555 | http://localhost:5555 |
+| **Backend Docs (Swagger)** | 5555 | http://localhost:5555/docs |
 
 ---
 
 ## 🚀 Como Rodar
 
-### Terminal 1 - Backend (Porta 5000)
+### Terminal 1 - Backend (Porta 5555)
 
 ```bash
 cd backend
@@ -21,10 +21,10 @@ python main.py
 
 Você verá:
 ```
-INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+INFO:     Uvicorn running on http://0.0.0.0:5555 (Press CTRL+C to quit)
 ```
 
-✅ Backend disponível em: `http://localhost:5000`
+✅ Backend disponível em: `http://localhost:5555`
 
 ### Terminal 2 - Frontend (Porta 8081)
 
@@ -57,21 +57,21 @@ server: {
 ```python
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)  # ← Backend porta 5000
+    uvicorn.run(app, host="0.0.0.0", port=5555)  # ← Backend porta 5555
 ```
 
 ### Variáveis de Ambiente - `.env.local`
 ```
-VITE_BACKEND_URL=http://localhost:5000  # ← Frontend conecta ao backend aqui
+VITE_BACKEND_URL=http://localhost:5555  # ← Frontend conecta ao backend aqui
 ```
 
 ### CORS - `backend/main.py`
 ```python
 origins = [
     "http://localhost:8081",   # ← Permite requisições do frontend
-    "http://localhost:5000",   # ← Permite requisições internas
+    "http://localhost:5555",   # ← Permite requisições internas
     "http://127.0.0.1:8081",
-    "http://127.0.0.1:5000",
+    "http://127.0.0.1:5555",
 ]
 ```
 
@@ -81,9 +81,9 @@ origins = [
 
 Quando iniciar os servidores, verifique:
 
-- [ ] Backend rodando em `http://localhost:6666`
+- [ ] Backend rodando em `http://localhost:5555`
 - [ ] Frontend rodando em `http://localhost:8081`
-- [ ] Documentação do backend em `http://localhost:6666/docs`
+- [ ] Documentação do backend em `http://localhost:5555/docs`
 - [ ] Formulário abre sem erros em `http://localhost:8081`
 - [ ] Preenchimento e envio do formulário funciona
 - [ ] Email é recebido na caixa de entrada
@@ -95,7 +95,7 @@ Quando iniciar os servidores, verifique:
 ```
 Frontend (8081)
     ↓ (POST /api/update-payment)
-Backend (6666)
+Backend (5555)
     ↓ (conecta SMTP Gmail)
 Gmail
     ↓ (envia email)
@@ -106,7 +106,7 @@ seu-email@gmail.com
 
 ## 🐛 Troubleshooting
 
-### "Conexão recusada em localhost:6666"
+### "Conexão recusada em localhost:5555"
 - Backend não está rodando
 - Certifique-se de estar na pasta `backend/`
 - Execute: `python main.py`
@@ -133,7 +133,7 @@ seu-email@gmail.com
 **Desenvolvedora/o, use estes links:**
 
 - 🌐 Frontend: http://localhost:8081
-- 🔧 Backend: http://localhost:5000
-- 📚 API Docs (Swagger): http://localhost:5000/docs
-- 🔌 API Redoc: http://localhost:5000/redoc
+- 🔧 Backend: http://localhost:5555
+- 📚 API Docs (Swagger): http://localhost:5555/docs
+- 🔌 API Redoc: http://localhost:5555/redoc
 

