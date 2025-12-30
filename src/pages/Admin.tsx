@@ -149,6 +149,30 @@ const Admin = () => {
     }
   };
 
+  const handleDeletePayment = async (payment: Payment) => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/payment/${payment.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPayments(payments.filter(p => p.id !== payment.id));
+        setPaymentToDelete(null);
+        toast.success('Pagamento deletado com sucesso');
+      } else {
+        toast.error(data.message || 'Erro ao deletar pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar pagamento:', error);
+      toast.error('Erro ao deletar pagamento');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleRefreshPayments = async () => {
     await fetchPayments();
   };
