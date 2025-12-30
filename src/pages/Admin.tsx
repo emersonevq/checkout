@@ -258,12 +258,35 @@ const Admin = () => {
 
   const copyToClipboard = async (text: string, fieldName: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      // Primeiro tenta com navigator.clipboard
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback para document.execCommand
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        if (!successful) {
+          throw new Error('Falha ao copiar');
+        }
+      }
+
       setCopiedField(fieldName);
       toast.success(`${fieldName} copiado!`);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (error) {
       toast.error('Erro ao copiar para clipboard');
+      console.error('Erro ao copiar:', error);
     }
   };
 
