@@ -415,6 +415,17 @@ const Admin = () => {
                         <TableCell>
                           {getStatusBadge(payment.status)}
                         </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => viewPaymentDetails(payment)}
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                            title="Visualizar detalhes"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
