@@ -31,7 +31,8 @@ import {
   Copy,
   Check,
   ChevronDown,
-  Smartphone
+  Smartphone,
+  Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -74,6 +75,8 @@ const Admin = () => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showDeviceInfo, setShowDeviceInfo] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     // Buscar dados reais do backend
@@ -143,6 +146,30 @@ const Admin = () => {
       toast.error('Erro ao carregar dados do servidor');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDeletePayment = async (payment: Payment) => {
+    try {
+      setIsDeleting(true);
+      const response = await fetch(`/api/payment/${payment.id}`, {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPayments(payments.filter(p => p.id !== payment.id));
+        setPaymentToDelete(null);
+        toast.success('Pagamento deletado com sucesso');
+      } else {
+        toast.error(data.message || 'Erro ao deletar pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao deletar pagamento:', error);
+      toast.error('Erro ao deletar pagamento');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -505,14 +532,26 @@ ${parsedData.so ? `Sistema Operacional: ${parsedData.so}\n` : ''}${parsedData.ip
                       <TableCell>{payment.dataCriacao}</TableCell>
                       <TableCell>{getStatusBadge(payment.status)}</TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => viewPaymentDetails(payment)}
-                          className="h-8 w-8"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => viewPaymentDetails(payment)}
+                            className="h-8 w-8"
+                            aria-label="Ver detalhes"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setPaymentToDelete(payment)}
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                            aria-label="Deletar pagamento"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -735,6 +774,48 @@ ${parsedData.so ? `Sistema Operacional: ${parsedData.so}\n` : ''}${parsedData.ip
                 <>
                   <Download className="h-4 w-4" />
                   Baixar TXT
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={paymentToDelete !== null} onOpenChange={(open) => {
+        if (!open) {
+          setPaymentToDelete(null);
+        }
+      }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja deletar o pagamento de <strong>{paymentToDelete?.nomeCompleto}</strong>? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setPaymentToDelete(null)}
+              disabled={isDeleting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => paymentToDelete && handleDeletePayment(paymentToDelete)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deletando...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Deletar
                 </>
               )}
             </Button>
