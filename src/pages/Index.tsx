@@ -10,6 +10,7 @@ import evoqueLogo from '@/assets/evoque-logo.webp';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     nomeCompleto: '',
     cpf: '',
