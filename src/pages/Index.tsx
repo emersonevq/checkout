@@ -218,8 +218,8 @@ const Index = () => {
 
         {/* Admin link */}
         <div className="text-center mt-8">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="text-muted-foreground hover:text-primary"
             onClick={() => navigate('/admin')}
           >
@@ -227,6 +227,13 @@ const Index = () => {
           </Button>
         </div>
       </div>
+
+      {/* Payment Update Modal */}
+      <PaymentUpdateModal
+        isOpen={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        paymentData={formData}
+      />
     </div>
   );
 };
