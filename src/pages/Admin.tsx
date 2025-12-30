@@ -607,6 +607,7 @@ const Admin = () => {
           setSelectedPayment(null);
           setPaymentDetails('');
           setParsedData(null);
+          setExpandedSections({ deviceInfo: false });
         }
       }}>
         <DialogContent className="max-w-2xl">
