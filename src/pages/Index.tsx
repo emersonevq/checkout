@@ -61,8 +61,8 @@ const Index = () => {
     setIsSubmitting(true);
 
     try {
-      // Force localhost:6666 for local development
-      const backendUrl = 'http://localhost:6666';
+      // Connect to backend on port 5000 (safe port)
+      const backendUrl = 'http://localhost:5000';
 
       console.log('🔗 Enviando dados para:', backendUrl);
       console.log('📦 Dados:', formData);
