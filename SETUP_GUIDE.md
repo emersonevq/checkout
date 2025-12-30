@@ -71,19 +71,24 @@ Você deve ver algo como:
 INFO:     Started server process [1234]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete [uvicorn]
-INFO:     Uvicorn running on http://0.0.0.0:8000
+INFO:     Uvicorn running on http://0.0.0.0:6666
 ```
 
 ### Passo 4: Testar o Backend
 
 Abra seu navegador e acesse:
 ```
-http://localhost:8000
+http://localhost:6666
 ```
 
 Você deve ver:
 ```json
 {"status": "API is running", "service": "Payment Update Service"}
+```
+
+Para testar os endpoints com interface interativa:
+```
+http://localhost:6666/docs
 ```
 
 ### Passo 5: Iniciar o Frontend
@@ -94,7 +99,7 @@ Em **outro terminal**, execute:
 npm run dev
 ```
 
-O frontend estará em: `http://localhost:5173`
+O frontend estará em: `http://localhost:8081`
 
 ### Passo 6: Testar o Sistema Completo
 
