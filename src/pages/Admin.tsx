@@ -58,6 +58,9 @@ const Admin = () => {
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isDownloadingFile, setIsDownloadingFile] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    deviceInfo: false
+  });
 
   interface ParsedPaymentData {
     nome: string;
