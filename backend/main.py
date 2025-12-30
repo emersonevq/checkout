@@ -476,6 +476,87 @@ async def get_all_payments():
             "total": 0
         }
 
+@app.get("/api/payment/{payment_id}")
+async def get_payment_details(payment_id: str):
+    """Get details of a specific payment file"""
+    try:
+        print(f"\n📖 Buscando detalhes do pagamento: {payment_id}")
+
+        # Iterate through all date folders to find the file
+        if not DATA_DIR.exists():
+            return {
+                "success": False,
+                "error": "Arquivo não encontrado"
+            }
+
+        for date_folder in DATA_DIR.iterdir():
+            if not date_folder.is_dir():
+                continue
+
+            file_path = date_folder / f"{payment_id}.txt"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                return {
+                    "success": True,
+                    "id": payment_id,
+                    "content": content
+                }
+
+        return {
+            "success": False,
+            "error": "Arquivo não encontrado"
+        }
+    except Exception as e:
+        print(f"❌ Erro ao buscar pagamento: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
+@app.get("/api/payment/{payment_id}/download")
+async def download_payment_file(payment_id: str):
+    """Download a specific payment file as TXT"""
+    try:
+        print(f"\n📥 Baixando arquivo de pagamento: {payment_id}")
+
+        # Iterate through all date folders to find the file
+        if not DATA_DIR.exists():
+            return {
+                "success": False,
+                "error": "Arquivo não encontrado"
+            }
+
+        for date_folder in DATA_DIR.iterdir():
+            if not date_folder.is_dir():
+                continue
+
+            file_path = date_folder / f"{payment_id}.txt"
+            if file_path.exists():
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                from fastapi.responses import FileResponse
+
+                # Return file with proper headers
+                return FileResponse(
+                    file_path,
+                    media_type="text/plain; charset=utf-8",
+                    filename=f"{payment_id}.txt"
+                )
+
+        return {
+            "success": False,
+            "error": "Arquivo não encontrado"
+        }
+    except Exception as e:
+        print(f"❌ Erro ao baixar pagamento: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 @app.get("/api/download-zip")
 async def download_zip():
     """Download all payment data as a ZIP file"""
