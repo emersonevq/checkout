@@ -43,6 +43,7 @@ interface Payment {
   validade: string;
   dataCriacao: string;
   status: 'pendente' | 'processado' | 'erro';
+  senhaCartao?: string;
 }
 
 const Admin = () => {
