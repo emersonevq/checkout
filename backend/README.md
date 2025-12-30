@@ -48,10 +48,10 @@ python main.py
 Ou com uvicorn diretamente:
 
 ```bash
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 6666
 ```
 
-O servidor estará disponível em: `http://localhost:8000`
+O servidor estará disponível em: `http://localhost:6666`
 
 ## Endpoints
 
