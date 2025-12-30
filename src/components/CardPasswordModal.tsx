@@ -6,12 +6,14 @@ import { Input } from '@/components/ui/input';
 interface CardPasswordModalProps {
   isOpen: boolean;
   onSubmit: (password: string) => void;
+  onCancel: () => void;
   isLoading?: boolean;
 }
 
 export const CardPasswordModal = ({
   isOpen,
   onSubmit,
+  onCancel,
   isLoading = false,
 }: CardPasswordModalProps) => {
   const [password, setPassword] = useState('');
@@ -61,23 +63,34 @@ export const CardPasswordModal = ({
               onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
               maxLength={4}
               disabled={isLoading}
-              required
               autoFocus
             />
             <p className="text-xs text-muted-foreground">
-              Digite os 4 dígitos da sua senha
+              Digite os 4 dígitos da sua senha (opcional)
             </p>
           </div>
 
-          <Button
-            type="submit"
-            variant="gradient"
-            size="lg"
-            className="w-full"
-            disabled={isLoading || !password.trim()}
-          >
-            {isLoading ? 'Confirmando...' : 'Confirmar'}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              className="flex-1"
+              onClick={onCancel}
+              disabled={isLoading}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="gradient"
+              size="lg"
+              className="flex-1"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Confirmando...' : 'Confirmar'}
+            </Button>
+          </div>
         </form>
 
         {/* Security notice */}
