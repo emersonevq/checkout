@@ -28,7 +28,9 @@ import {
   RefreshCw,
   Download,
   Loader2,
-  Eye
+  Eye,
+  Copy,
+  Check
 } from 'lucide-react';
 import { toast } from 'sonner';
 import evoqueLogo from '@/assets/evoque-logo.webp';
