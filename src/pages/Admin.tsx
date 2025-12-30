@@ -75,6 +75,8 @@ const Admin = () => {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showDeviceInfo, setShowDeviceInfo] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
+  const [paymentToDelete, setPaymentToDelete] = useState<Payment | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     // Buscar dados reais do backend
