@@ -210,21 +210,18 @@ export const PaymentProcessingScreen = ({
           <>
             {/* Success State */}
             <div className="flex flex-col items-center justify-center space-y-6 py-12">
-              <div className="relative h-20 w-20">
-                <div className="absolute inset-0 bg-green-100/50 rounded-full animate-pulse" />
-                <CheckCircle className="h-20 w-20 text-green-500 animate-bounce" />
+              <div className="h-20 w-20 flex items-center justify-center">
+                <CheckCircle className="h-20 w-20 text-green-500" />
               </div>
 
               <div className="text-center space-y-3">
                 <h2 className="text-2xl font-bold text-foreground">
-                  Seus dados foram atualizados com sucesso,
+                  Seus dados foram atualizados com sucesso!
                 </h2>
-                <p className="text-xl text-primary font-semibold">obrigado!</p>
+                <p className="text-base text-muted-foreground">
+                  Obrigado pela confiança.
+                </p>
               </div>
-
-              <p className="text-sm text-muted-foreground text-center max-w-xs">
-                Uma cópia de seus dados foi enviada para seu e-mail
-              </p>
             </div>
           </>
         )}
