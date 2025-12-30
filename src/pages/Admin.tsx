@@ -69,7 +69,7 @@ const Admin = () => {
 
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
-  const BACKEND_URL = 'http://localhost:5000';
+  const BACKEND_URL = 'http://localhost:5555';
 
   useEffect(() => {
     fetchPayments();
