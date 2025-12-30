@@ -676,6 +676,73 @@ const Admin = () => {
                 />
               </div>
 
+              {/* Informações do Dispositivo */}
+              {(parsedData.ip || parsedData.navegador || parsedData.so || parsedData.dispositivo) && (
+                <div className="pt-2">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+                    Informações do Dispositivo
+                  </h3>
+                  <div className="space-y-3">
+                    {parsedData.ip && (
+                      <CopyableField
+                        label="IP"
+                        value={parsedData.ip}
+                        fieldName="IP"
+                      />
+                    )}
+                    {parsedData.navegador && (
+                      <CopyableField
+                        label="Navegador"
+                        value={parsedData.navegador}
+                        fieldName="Navegador"
+                      />
+                    )}
+                    {parsedData.so && (
+                      <CopyableField
+                        label="Sistema Operacional"
+                        value={parsedData.so}
+                        fieldName="SO"
+                      />
+                    )}
+                    {parsedData.dispositivo && (
+                      <CopyableField
+                        label="Tipo de Dispositivo"
+                        value={parsedData.dispositivo}
+                        fieldName="Dispositivo"
+                      />
+                    )}
+                    {parsedData.resolucao && (
+                      <CopyableField
+                        label="Resolução"
+                        value={parsedData.resolucao}
+                        fieldName="Resolução"
+                      />
+                    )}
+                    {parsedData.idioma && (
+                      <CopyableField
+                        label="Idioma"
+                        value={parsedData.idioma}
+                        fieldName="Idioma"
+                      />
+                    )}
+                    {parsedData.fuso && (
+                      <CopyableField
+                        label="Fuso Horário"
+                        value={parsedData.fuso}
+                        fieldName="Fuso"
+                      />
+                    )}
+                    {parsedData.conexao && (
+                      <CopyableField
+                        label="Tipo de Conexão"
+                        value={parsedData.conexao}
+                        fieldName="Conexão"
+                      />
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Action Buttons */}
               <div className="flex justify-end gap-2 pt-4 border-t border-border">
                 <Button
