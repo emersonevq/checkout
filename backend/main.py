@@ -47,21 +47,14 @@ print("="*80 + "\n")
 
 app = FastAPI(title="Payment Update API", version="1.0.0")
 
-# CORS configuration
-origins = [
-    "http://localhost:8081",
-    "http://localhost:6666",
-    "http://127.0.0.1:8081",
-    "http://127.0.0.1:6666",
-]
-
+# CORS configuration - Allow ALL for development/debugging
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins during development
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
-    max_age=86400,
+    max_age=3600,
 )
 
 # Pydantic models
