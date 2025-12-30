@@ -61,7 +61,8 @@ const Index = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('http://localhost:8000/api/update-payment', {
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const response = await fetch(`${backendUrl}/api/update-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
