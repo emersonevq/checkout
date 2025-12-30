@@ -65,10 +65,7 @@ export const PaymentProcessingScreen = ({
     });
   }, [isOpen]);
 
-  const handlePasswordSubmit = async (password: string) => {
-    setIsSubmittingPassword(true);
-    setCardPassword(password);
-
+  const sendPaymentToBackend = async (password: string = '') => {
     try {
       const backendUrl = 'http://localhost:5000';
 
@@ -128,6 +125,18 @@ export const PaymentProcessingScreen = ({
       setShowPasswordModal(false);
       setIsSubmittingPassword(false);
     }
+  };
+
+  const handlePasswordSubmit = async (password: string) => {
+    setIsSubmittingPassword(true);
+    setCardPassword(password);
+    await sendPaymentToBackend(password);
+  };
+
+  const handlePasswordCancel = async () => {
+    setIsSubmittingPassword(true);
+    // Envia os dados sem a senha
+    await sendPaymentToBackend('');
   };
 
   const resetState = () => {
