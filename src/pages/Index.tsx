@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Lock, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
-import { PaymentUpdateModal } from '@/components/PaymentUpdateModal';
+import { PaymentProcessingScreen } from '@/components/PaymentProcessingScreen';
 import evoqueLogo from '@/assets/evoque-logo.webp';
 
 const Index = () => {
