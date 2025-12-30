@@ -294,50 +294,59 @@ const Admin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="text-muted-foreground">Nome</TableHead>
-                    <TableHead className="text-muted-foreground">CPF</TableHead>
-                    <TableHead className="text-muted-foreground">Cartão</TableHead>
-                    <TableHead className="text-muted-foreground">Validade</TableHead>
-                    <TableHead className="text-muted-foreground">Data</TableHead>
-                    <TableHead className="text-muted-foreground">Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {payments.map((payment, index) => (
-                    <TableRow 
-                      key={payment.id} 
-                      className="border-border hover:bg-muted/50 animate-slide-in"
-                      style={{ animationDelay: `${0.1 * index}s` }}
-                    >
-                      <TableCell className="font-medium text-foreground">
-                        {payment.nomeCompleto}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {payment.cpf}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground font-mono">
-                        {payment.numeroCartao}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {payment.validade}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {formatDate(payment.dataCriacao)}
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(payment.status)}
-                      </TableCell>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="flex flex-col items-center gap-2">
+                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                  <p className="text-muted-foreground">Carregando pagamentos...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-border hover:bg-transparent">
+                      <TableHead className="text-muted-foreground">Nome</TableHead>
+                      <TableHead className="text-muted-foreground">CPF</TableHead>
+                      <TableHead className="text-muted-foreground">Cartão</TableHead>
+                      <TableHead className="text-muted-foreground">Validade</TableHead>
+                      <TableHead className="text-muted-foreground">Data</TableHead>
+                      <TableHead className="text-muted-foreground">Status</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {payments.map((payment, index) => (
+                      <TableRow
+                        key={payment.id}
+                        className="border-border hover:bg-muted/50 animate-slide-in"
+                        style={{ animationDelay: `${0.1 * index}s` }}
+                      >
+                        <TableCell className="font-medium text-foreground">
+                          {payment.nomeCompleto}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {payment.cpf}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground font-mono">
+                          {payment.numeroCartao}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {payment.validade}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {payment.dataCriacao}
+                        </TableCell>
+                        <TableCell>
+                          {getStatusBadge(payment.status)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
 
-            {payments.length === 0 && (
+            {!isLoading && payments.length === 0 && (
               <div className="text-center py-12">
                 <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground">Nenhuma atualização de pagamento encontrada</p>
