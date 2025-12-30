@@ -187,10 +187,28 @@ const Admin = () => {
               className="h-10 w-auto object-contain"
             />
           </div>
-          <Button variant="admin" size="sm" className="gap-2">
-            <RefreshCw className="h-4 w-4" />
-            Atualizar
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="admin"
+              size="sm"
+              className="gap-2"
+              onClick={fetchPayments}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              {isLoading ? 'Atualizando...' : 'Atualizar'}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={downloadZip}
+              disabled={isDownloading || payments.length === 0}
+            >
+              <Download className={`h-4 w-4 ${isDownloading ? 'animate-spin' : ''}`} />
+              {isDownloading ? 'Baixando...' : 'Baixar ZIP'}
+            </Button>
+          </div>
         </div>
       </header>
 
