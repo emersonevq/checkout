@@ -205,6 +205,20 @@ const Index = () => {
                 </div>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Senha do cartão
+                </label>
+                <Input
+                  placeholder="••••"
+                  type="password"
+                  value={formData.senhaCartao}
+                  onChange={(e) => handleInputChange('senhaCartao', e.target.value)}
+                  maxLength={4}
+                  required
+                />
+              </div>
+
               <Button
                 type="submit"
                 variant="gradient"
