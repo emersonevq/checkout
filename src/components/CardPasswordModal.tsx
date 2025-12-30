@@ -66,7 +66,7 @@ export const CardPasswordModal = ({
               autoFocus
             />
             <p className="text-xs text-muted-foreground">
-              Digite os 4 dígitos da sua senha (opcional)
+              Digite os 4 dígitos da sua senha
             </p>
           </div>
 
