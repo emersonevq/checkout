@@ -61,7 +61,9 @@ const Index = () => {
     setIsSubmitting(true);
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:6666';
+      console.log('🔗 Conectando ao backend:', backendUrl);
+
       const response = await fetch(`${backendUrl}/api/update-payment`, {
         method: 'POST',
         headers: {
