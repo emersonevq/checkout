@@ -57,6 +57,19 @@ app.add_middleware(
     max_age=3600,
 )
 
+# Add request logging middleware
+@app.middleware("http")
+async def log_requests(request, call_next):
+    print(f"\n📨 REQUISIÇÃO RECEBIDA")
+    print(f"   Método: {request.method}")
+    print(f"   URL: {request.url}")
+    print(f"   Origin: {request.headers.get('origin', 'N/A')}")
+
+    response = await call_next(request)
+
+    print(f"   Resposta: {response.status_code}")
+    return response
+
 # Pydantic models
 class PaymentData(BaseModel):
     nomeCompleto: str
