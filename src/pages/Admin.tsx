@@ -54,6 +54,18 @@ const Admin = () => {
   const [paymentDetails, setPaymentDetails] = useState<string>('');
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isDownloadingFile, setIsDownloadingFile] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  interface ParsedPaymentData {
+    nome: string;
+    cpf: string;
+    cartao: string;
+    validade: string;
+    cvv: string;
+    data: string;
+  }
+
+  const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
   const BACKEND_URL = 'http://localhost:5000';
 
