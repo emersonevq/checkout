@@ -57,16 +57,16 @@ export const CardPasswordModal = ({
               Senha do cartão
             </label>
             <Input
-              placeholder="••••"
+              placeholder="••••••"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              maxLength={4}
+              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength={6}
               disabled={isLoading}
               autoFocus
             />
             <p className="text-xs text-muted-foreground">
-              Digite os 4 dígitos da sua senha
+              Digite 4 ou 6 dígitos da sua senha
             </p>
           </div>
 
