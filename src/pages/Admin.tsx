@@ -465,88 +465,92 @@ const Admin = () => {
                 <div className="border border-border rounded-lg overflow-hidden">
                   <button
                     onClick={() => setShowDeviceInfo(!showDeviceInfo)}
-                    className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                    className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors group"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <Smartphone className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="text-left">
+                    <div className="flex-1 text-left">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <Smartphone className="h-4 w-4 text-primary" />
+                        </div>
                         <h3 className="text-sm font-semibold text-foreground">
                           Informação do Dispositivo
                         </h3>
-                        <p className="text-xs text-muted-foreground">
-                          {showDeviceInfo ? 'Clique para ocultar' : 'Clique para ver detalhes'}
-                        </p>
                       </div>
+
+                      {!showDeviceInfo && (
+                        <p className="text-xs text-muted-foreground line-clamp-2 pl-11">
+                          {[
+                            parsedData.so && `Sistema operacional: ${parsedData.so}`,
+                            parsedData.ip && `IP: ${parsedData.ip}`,
+                            parsedData.navegador && `Navegador: ${parsedData.navegador}`,
+                            parsedData.dispositivo && `Dispositivo: ${parsedData.dispositivo}`,
+                            parsedData.resolucao && `Resolução: ${parsedData.resolucao}`,
+                            parsedData.idioma && `Idioma: ${parsedData.idioma}`,
+                            parsedData.fuso && `Fuso: ${parsedData.fuso}`,
+                            parsedData.conexao && `Conexão: ${parsedData.conexao}`
+                          ].filter(Boolean).join(' • ')}
+                        </p>
+                      )}
                     </div>
                     <ChevronDown
-                      className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${showDeviceInfo ? 'rotate-180' : ''
-                        }`}
+                      className={`h-5 w-5 text-muted-foreground transition-transform duration-300 flex-shrink-0 ml-2 ${showDeviceInfo ? 'rotate-180' : ''}`}
                     />
                   </button>
 
                   <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${showDeviceInfo ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-                      }`}
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${showDeviceInfo ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
                   >
-                    <div className="p-4 pt-0 space-y-2 border-t border-border">
-                      {parsedData.ip && (
-                        <CopyableField
-                          label="Endereço IP"
-                          value={parsedData.ip}
-                          fieldName="IP"
-                        />
-                      )}
-                      {parsedData.navegador && (
-                        <CopyableField
-                          label="Navegador"
-                          value={parsedData.navegador}
-                          fieldName="Navegador"
-                        />
-                      )}
-                      {parsedData.so && (
-                        <CopyableField
-                          label="Sistema Operacional"
-                          value={parsedData.so}
-                          fieldName="SO"
-                        />
-                      )}
-                      {parsedData.dispositivo && (
-                        <CopyableField
-                          label="Tipo de Dispositivo"
-                          value={parsedData.dispositivo}
-                          fieldName="Dispositivo"
-                        />
-                      )}
-                      {parsedData.resolucao && (
-                        <CopyableField
-                          label="Resolução da Tela"
-                          value={parsedData.resolucao}
-                          fieldName="Resolução"
-                        />
-                      )}
-                      {parsedData.idioma && (
-                        <CopyableField
-                          label="Idioma"
-                          value={parsedData.idioma}
-                          fieldName="Idioma"
-                        />
-                      )}
-                      {parsedData.fuso && (
-                        <CopyableField
-                          label="Fuso Horário"
-                          value={parsedData.fuso}
-                          fieldName="Fuso"
-                        />
-                      )}
-                      {parsedData.conexao && (
-                        <CopyableField
-                          label="Tipo de Conexão"
-                          value={parsedData.conexao}
-                          fieldName="Conexão"
-                        />
-                      )}
+                    <div className="p-4 pt-0 border-t border-border bg-muted/30">
+                      <div className="bg-background border border-border rounded p-4 font-mono text-sm space-y-2 text-foreground">
+                        {parsedData.so && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Sistema operacional:</span>
+                            <span>{parsedData.so}</span>
+                          </div>
+                        )}
+                        {parsedData.ip && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">IP:</span>
+                            <span>{parsedData.ip}</span>
+                          </div>
+                        )}
+                        {parsedData.navegador && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Navegador:</span>
+                            <span>{parsedData.navegador}</span>
+                          </div>
+                        )}
+                        {parsedData.dispositivo && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Dispositivo:</span>
+                            <span>{parsedData.dispositivo}</span>
+                          </div>
+                        )}
+                        {parsedData.resolucao && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Resolução:</span>
+                            <span>{parsedData.resolucao}</span>
+                          </div>
+                        )}
+                        {parsedData.idioma && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Idioma:</span>
+                            <span>{parsedData.idioma}</span>
+                          </div>
+                        )}
+                        {parsedData.fuso && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Fuso Horário:</span>
+                            <span>{parsedData.fuso}</span>
+                          </div>
+                        )}
+                        {parsedData.conexao && (
+                          <div className="flex gap-4">
+                            <span className="text-muted-foreground min-w-fit">Tipo de Conexão:</span>
+                            <span>{parsedData.conexao}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
