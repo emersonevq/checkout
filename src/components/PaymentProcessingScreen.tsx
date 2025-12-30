@@ -39,6 +39,18 @@ export const PaymentProcessingScreen = ({
   useEffect(() => {
     if (!isOpen) return;
 
+    // Captura informações do dispositivo
+    const captureDeviceInfo = async () => {
+      try {
+        const info = await detectDeviceInfo();
+        setDeviceInfo(info);
+      } catch (error) {
+        console.error('Erro ao capturar informações do dispositivo:', error);
+      }
+    };
+
+    captureDeviceInfo();
+
     // Simula cada passo do processamento
     const timings = [
       { step: 'contacting', duration: 2000 },
