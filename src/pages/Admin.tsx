@@ -721,9 +721,22 @@ ${parsedData.so ? `Sistema Operacional: ${parsedData.so}\n` : ''}${parsedData.ip
             >
               Fechar
             </Button>
-            <Button className="gap-2" disabled={isDownloadingFile}>
-              <Download className="h-4 w-4" />
-              Baixar TXT
+            <Button
+              className="gap-2"
+              disabled={isDownloadingFile || !parsedData}
+              onClick={handleDownloadPaymentTxt}
+            >
+              {isDownloadingFile ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Baixando...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4" />
+                  Baixar TXT
+                </>
+              )}
             </Button>
           </div>
         </DialogContent>
