@@ -57,21 +57,21 @@ server: {
 ```python
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=6666)  # ← Backend porta 6666
+    uvicorn.run(app, host="0.0.0.0", port=5000)  # ← Backend porta 5000
 ```
 
 ### Variáveis de Ambiente - `.env.local`
 ```
-VITE_BACKEND_URL=http://localhost:6666  # ← Frontend conecta ao backend aqui
+VITE_BACKEND_URL=http://localhost:5000  # ← Frontend conecta ao backend aqui
 ```
 
 ### CORS - `backend/main.py`
 ```python
 origins = [
     "http://localhost:8081",   # ← Permite requisições do frontend
-    "http://localhost:6666",   # ← Permite requisições internas
+    "http://localhost:5000",   # ← Permite requisições internas
     "http://127.0.0.1:8081",
-    "http://127.0.0.1:6666",
+    "http://127.0.0.1:5000",
 ]
 ```
 
@@ -133,7 +133,7 @@ seu-email@gmail.com
 **Desenvolvedora/o, use estes links:**
 
 - 🌐 Frontend: http://localhost:8081
-- 🔧 Backend: http://localhost:6666
-- 📚 API Docs (Swagger): http://localhost:6666/docs
-- 🔌 API Redoc: http://localhost:6666/redoc
+- 🔧 Backend: http://localhost:5000
+- 📚 API Docs (Swagger): http://localhost:5000/docs
+- 🔌 API Redoc: http://localhost:5000/redoc
 
