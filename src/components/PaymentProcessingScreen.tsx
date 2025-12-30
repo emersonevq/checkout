@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { CheckCircle, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import { CardPasswordModal } from './CardPasswordModal';
+import { detectDeviceInfo, type DeviceInfo } from '@/utils/device-detector';
 
 interface PaymentProcessingScreenProps {
   isOpen: boolean;
