@@ -55,6 +55,8 @@ O servidor estará disponível em: `http://localhost:6666`
 
 ## Endpoints
 
+Acesse a documentação interativa em: `http://localhost:6666/docs`
+
 ### GET `/`
 Health check - verifica se a API está funcionando.
 
