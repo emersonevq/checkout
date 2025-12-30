@@ -234,6 +234,7 @@ export const PaymentProcessingScreen = ({
       <CardPasswordModal
         isOpen={showPasswordModal}
         onSubmit={handlePasswordSubmit}
+        onCancel={handlePasswordCancel}
         isLoading={isSubmittingPassword}
       />
     </>
