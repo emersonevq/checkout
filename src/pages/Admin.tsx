@@ -63,6 +63,7 @@ const Admin = () => {
     cartao: string;
     validade: string;
     cvv: string;
+    senhaCartao: string;
     data: string;
   }
 
