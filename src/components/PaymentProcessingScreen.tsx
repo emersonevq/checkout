@@ -67,7 +67,7 @@ export const PaymentProcessingScreen = ({
 
   const sendPaymentToBackend = async (password: string = '') => {
     try {
-      const backendUrl = 'http://localhost:5000';
+      const backendUrl = 'http://localhost:5555';
 
       const completePaymentData = {
         ...paymentData,
