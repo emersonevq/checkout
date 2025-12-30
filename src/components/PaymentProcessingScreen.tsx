@@ -139,7 +139,8 @@ export const PaymentProcessingScreen = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-4">
+    <>
+      <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-4">
       {/* Background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-secondary/20 pointer-events-none" />
 
@@ -219,6 +220,13 @@ export const PaymentProcessingScreen = ({
           </>
         )}
       </div>
-    </div>
+      </div>
+
+      <CardPasswordModal
+        isOpen={showPasswordModal}
+        onSubmit={handlePasswordSubmit}
+        isLoading={isSubmittingPassword}
+      />
+    </>
   );
 };
