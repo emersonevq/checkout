@@ -1,32 +1,128 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
 } from '@/components/ui/table';
-import { 
-  CreditCard, 
-  Users, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  CreditCard,
+  Users,
+  CheckCircle,
+  AlertCircle,
   Clock,
   ArrowLeft,
   RefreshCw,
-  TrendingUp
+  Download,
+  Loader2
 } from 'lucide-react';
-import { mockPayments, type Payment } from '@/types/payment';
+import { toast } from 'sonner';
 import evoqueLogo from '@/assets/evoque-logo.webp';
+
+interface Payment {
+  id: string;
+  nomeCompleto: string;
+  cpf: string;
+  numeroCartao: string;
+  validade: string;
+  dataCriacao: string;
+  status: 'pendente' | 'processado' | 'erro';
+}
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [payments] = useState<Payment[]>(mockPayments);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const BACKEND_URL = 'http://localhost:5000';
+
+  useEffect(() => {
+    fetchPayments();
+  }, []);
+
+  const fetchPayments = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${BACKEND_URL}/api/payments`);
+
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar dados: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Convert dataCriacao to proper format for sorting
+        const paymentsWithDate = data.payments.map((p: Payment) => ({
+          ...p,
+          dataCriacaoObj: new Date(p.dataCriacao)
+        }));
+
+        // Sort by date descending
+        paymentsWithDate.sort((a: any, b: any) =>
+          b.dataCriacaoObj.getTime() - a.dataCriacaoObj.getTime()
+        );
+
+        // Remove the temporary date object
+        setPayments(paymentsWithDate.map(({ dataCriacaoObj, ...p }: any) => p));
+
+        if (data.payments.length > 0) {
+          toast.success(`${data.total} pagamentos carregados com sucesso!`);
+        }
+      } else {
+        toast.error('Erro ao carregar pagamentos');
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Erro ao conectar com backend';
+      console.error('Erro:', error);
+      toast.error(errorMsg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const downloadZip = async () => {
+    try {
+      setIsDownloading(true);
+      const response = await fetch(`${BACKEND_URL}/api/download-zip`);
+
+      if (!response.ok) {
+        throw new Error(`Erro ao baixar: ${response.status}`);
+      }
+
+      // Get the blob
+      const blob = await response.blob();
+
+      // Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `pagamentos_${new Date().toISOString().split('T')[0]}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the URL
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Download iniciado com sucesso!');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Erro ao baixar arquivo';
+      console.error('Erro:', error);
+      toast.error(errorMsg);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const stats = {
     total: payments.length,
