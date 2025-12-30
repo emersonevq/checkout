@@ -30,7 +30,9 @@ import {
   Loader2,
   Eye,
   Copy,
-  Check
+  Check,
+  ChevronDown,
+  Smartphone
 } from 'lucide-react';
 import { toast } from 'sonner';
 import evoqueLogo from '@/assets/evoque-logo.webp';
