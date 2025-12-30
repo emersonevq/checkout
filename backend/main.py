@@ -636,6 +636,7 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
             'cpf': '',
             'numeroCartao': '',
             'validade': '',
+            'cvv': '',
             'senhaCartao': '',
             'dataCriacao': file_path.parent.name,  # Date folder
             'status': 'processado'
