@@ -294,6 +294,13 @@ const Admin = () => {
     }
   };
 
+  const toggleSection = (sectionName: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [sectionName]: !prev[sectionName]
+    }));
+  };
+
   const copyToClipboard = async (text: string, fieldName: string) => {
     try {
       // Primeiro tenta com navigator.clipboard
