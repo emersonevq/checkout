@@ -117,7 +117,7 @@ O frontend estará em: `http://localhost:8081`
 Para testar se o email está funcionando, acesse:
 
 ```
-http://localhost:8000/docs
+http://localhost:6666/docs
 ```
 
 Procure pelo endpoint `POST /api/test-email` e clique em "Try it out" > "Execute"
