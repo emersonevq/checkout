@@ -383,10 +383,12 @@ export async function detectDeviceInfo(): Promise<DeviceInfo> {
 /**
  * Hook para obter informações do dispositivo
  */
+import React from 'react';
+
 export function useDeviceInfo() {
   const [deviceInfo, setDeviceInfo] = React.useState<DeviceInfo | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
-  
+
   React.useEffect(() => {
     const loadDeviceInfo = async () => {
       try {
@@ -398,11 +400,9 @@ export function useDeviceInfo() {
         setIsLoading(false);
       }
     };
-    
+
     loadDeviceInfo();
   }, []);
-  
+
   return { deviceInfo, isLoading };
 }
-
-import React from 'react';
