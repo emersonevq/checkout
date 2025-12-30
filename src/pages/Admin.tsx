@@ -531,12 +531,13 @@ const Admin = () => {
         if (!open) {
           setSelectedPayment(null);
           setPaymentDetails('');
+          setParsedData(null);
         }
       }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Detalhes do Pagamento</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-2xl">Detalhes do Pagamento</DialogTitle>
+            <DialogDescription className="text-base">
               {selectedPayment?.nomeCompleto}
             </DialogDescription>
           </DialogHeader>
@@ -548,24 +549,73 @@ const Admin = () => {
                 <p className="text-muted-foreground">Carregando detalhes...</p>
               </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {/* File content preview */}
-              <div className="bg-muted p-4 rounded-lg border border-border">
-                <pre className="text-sm text-foreground whitespace-pre-wrap overflow-auto max-h-96 font-mono">
-                  {paymentDetails}
-                </pre>
+          ) : parsedData ? (
+            <div className="space-y-5">
+              {/* Informações Pessoais Section */}
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+                  Informações Pessoais
+                </h3>
+                <div className="space-y-3">
+                  <CopyableField
+                    label="Nome Completo"
+                    value={parsedData.nome}
+                    fieldName="Nome"
+                  />
+                  <CopyableField
+                    label="CPF"
+                    value={parsedData.cpf}
+                    fieldName="CPF"
+                  />
+                </div>
               </div>
 
-              {/* Download button */}
-              <div className="flex justify-end gap-2">
+              {/* Dados do Cartão Section */}
+              <div className="pt-2">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+                  Dados do Cartão
+                </h3>
+                <div className="space-y-3">
+                  <CopyableField
+                    label="Número do Cartão"
+                    value={parsedData.cartao}
+                    fieldName="Cartão"
+                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <CopyableField
+                      label="Validade"
+                      value={parsedData.validade}
+                      fieldName="Validade"
+                    />
+                    <CopyableField
+                      label="CVV"
+                      value={parsedData.cvv}
+                      fieldName="CVV"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Data e Hora */}
+              <div className="pt-2">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+                  Data e Hora
+                </h3>
+                <CopyableField
+                  label="Data/Hora do Registro"
+                  value={parsedData.data}
+                  fieldName="Data"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end gap-2 pt-4 border-t border-border">
                 <Button
                   variant="outline"
                   onClick={() => {
-                    if (selectedPayment) {
-                      setSelectedPayment(null);
-                      setPaymentDetails('');
-                    }
+                    setSelectedPayment(null);
+                    setPaymentDetails('');
+                    setParsedData(null);
                   }}
                 >
                   Fechar
@@ -580,7 +630,7 @@ const Admin = () => {
                 </Button>
               </div>
             </div>
-          )}
+          ) : null}
         </DialogContent>
       </Dialog>
     </div>
