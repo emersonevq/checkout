@@ -12,7 +12,7 @@
 
 ## 🚀 Como Rodar
 
-### Terminal 1 - Backend (Porta 6666)
+### Terminal 1 - Backend (Porta 5000)
 
 ```bash
 cd backend
@@ -21,10 +21,10 @@ python main.py
 
 Você verá:
 ```
-INFO:     Uvicorn running on http://0.0.0.0:6666 (Press CTRL+C to quit)
+INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 ```
 
-✅ Backend disponível em: `http://localhost:6666`
+✅ Backend disponível em: `http://localhost:5000`
 
 ### Terminal 2 - Frontend (Porta 8081)
 
