@@ -205,11 +205,22 @@ const Admin = () => {
     setCopiedField(null);
     setShowDeviceInfo(false);
 
-    setTimeout(() => {
-      const parsed = parsePaymentContent('mock content');
-      setParsedData(parsed);
+    try {
+      const response = await fetch(`/api/payment/${payment.id}`);
+      const data = await response.json();
+
+      if (data.success && data.content) {
+        const parsed = parsePaymentContent(data.content);
+        setParsedData(parsed);
+      } else {
+        toast.error('Erro ao carregar detalhes do pagamento');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar detalhes:', error);
+      toast.error('Erro ao carregar detalhes');
+    } finally {
       setIsLoadingDetails(false);
-    }, 800);
+    }
   };
 
   const copyToClipboard = async (text: string, fieldName: string) => {
