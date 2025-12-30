@@ -198,14 +198,13 @@ const Index = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                variant="gradient" 
-                size="lg" 
+              <Button
+                type="submit"
+                variant="gradient"
+                size="lg"
                 className="w-full mt-6"
-                disabled={isSubmitting}
               >
-                {isSubmitting ? 'Processando...' : 'Atualizar pagamento'}
+                Atualizar pagamento
               </Button>
             </form>
           </CardContent>
