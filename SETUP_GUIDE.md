@@ -103,7 +103,7 @@ O frontend estará em: `http://localhost:8081`
 
 ### Passo 6: Testar o Sistema Completo
 
-1. Abra o navegador no frontend: `http://localhost:5173`
+1. Abra o navegador no frontend: `http://localhost:8081`
 2. Preencha o formulário com dados de teste
 3. Clique em "Atualizar pagamento"
 4. Verifique se recebeu o email!
