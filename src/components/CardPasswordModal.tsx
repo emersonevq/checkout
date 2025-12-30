@@ -42,7 +42,7 @@ export const CardPasswordModal = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-foreground">
-              Confirmação de Identidade
+              Confirme sua identidade
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               Insira a senha do seu cartão para confirmar
@@ -57,16 +57,16 @@ export const CardPasswordModal = ({
               Senha do cartão
             </label>
             <Input
-              placeholder="••••"
+              placeholder="••••••"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 4))}
-              maxLength={4}
+              onChange={(e) => setPassword(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              maxLength={6}
               disabled={isLoading}
               autoFocus
             />
             <p className="text-xs text-muted-foreground">
-              Digite os 4 dígitos da sua senha (opcional)
+              Digite 4 ou 6 dígitos da sua senha
             </p>
           </div>
 
