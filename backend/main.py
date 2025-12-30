@@ -13,11 +13,17 @@ load_dotenv()
 
 app = FastAPI(title="Payment Update API", version="1.0.0")
 
-# CORS configuration - Allow all origins for development
-# In production, specify exact origins
+# CORS configuration
+origins = [
+    "http://localhost:8081",
+    "http://localhost:6666",
+    "http://127.0.0.1:8081",
+    "http://127.0.0.1:6666",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins in development
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
