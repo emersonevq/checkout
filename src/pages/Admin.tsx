@@ -4,6 +4,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   Table,
   TableBody,
   TableCell,
@@ -20,7 +27,8 @@ import {
   ArrowLeft,
   RefreshCw,
   Download,
-  Loader2
+  Loader2,
+  Eye
 } from 'lucide-react';
 import { toast } from 'sonner';
 import evoqueLogo from '@/assets/evoque-logo.webp';
