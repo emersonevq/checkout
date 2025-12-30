@@ -31,7 +31,8 @@ import {
   Copy,
   Check,
   ChevronDown,
-  Smartphone
+  Smartphone,
+  Trash2
 } from 'lucide-react';
 import { toast } from 'sonner';
 
