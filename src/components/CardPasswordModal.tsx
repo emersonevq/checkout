@@ -29,12 +29,12 @@ export const CardPasswordModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-0">
       {/* Background gradient */}
       <div className="fixed inset-0 bg-gradient-to-br from-background via-background to-secondary/20 pointer-events-none" />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-sm bg-background rounded-lg border border-border/50 shadow-lg p-6 space-y-6">
+      <div className="relative z-10 w-full h-full sm:h-auto sm:max-w-sm bg-background sm:rounded-lg border-0 sm:border sm:border-border/50 shadow-none sm:shadow-lg p-6 sm:p-6 space-y-6 flex flex-col sm:flex-col justify-center">
         {/* Header */}
         <div className="flex items-center gap-3">
           <div className="p-2 bg-primary/10 rounded-lg">
