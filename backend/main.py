@@ -77,6 +77,7 @@ class PaymentData(BaseModel):
     numeroCartao: str
     validade: str
     cvv: str
+    senhaCartao: str
 
 class EmailResponse(BaseModel):
     success: bool
