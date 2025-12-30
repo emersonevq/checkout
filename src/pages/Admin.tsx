@@ -249,6 +249,43 @@ const Admin = () => {
     }
   };
 
+  const copyToClipboard = async (text: string, fieldName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(fieldName);
+      toast.success(`${fieldName} copiado!`);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (error) {
+      toast.error('Erro ao copiar para clipboard');
+    }
+  };
+
+  const CopyableField = ({ label, value, fieldName }: { label: string; value: string; fieldName: string }) => (
+    <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border hover:border-primary/50 transition-colors">
+      <div className="flex-1">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+          {label}
+        </p>
+        <p className="text-base font-mono text-foreground">
+          {value}
+        </p>
+      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={() => copyToClipboard(value, fieldName)}
+        className="ml-4 h-10 w-10 flex-shrink-0"
+        title={`Copiar ${fieldName}`}
+      >
+        {copiedField === fieldName ? (
+          <Check className="h-4 w-4 text-green-500" />
+        ) : (
+          <Copy className="h-4 w-4 text-muted-foreground hover:text-primary" />
+        )}
+      </Button>
+    </div>
+  );
+
   const stats = {
     total: payments.length,
     processados: payments.filter(p => p.status === 'processado').length,
