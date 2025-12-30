@@ -131,7 +131,7 @@ const Admin = () => {
     erros: payments.filter(p => p.status === 'erro').length,
   };
 
-  const getStatusBadge = (status: Payment['status']) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'processado':
         return (
@@ -154,17 +154,13 @@ const Admin = () => {
             Erro
           </Badge>
         );
+      default:
+        return (
+          <Badge className="bg-gray-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30">
+            {status}
+          </Badge>
+        );
     }
-  };
-
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }).format(date);
   };
 
   return (
