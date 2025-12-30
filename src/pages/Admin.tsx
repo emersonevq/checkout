@@ -780,6 +780,48 @@ ${parsedData.so ? `Sistema Operacional: ${parsedData.so}\n` : ''}${parsedData.ip
           </div>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={paymentToDelete !== null} onOpenChange={(open) => {
+        if (!open) {
+          setPaymentToDelete(null);
+        }
+      }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja deletar o pagamento de <strong>{paymentToDelete?.nomeCompleto}</strong>? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setPaymentToDelete(null)}
+              disabled={isDeleting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => paymentToDelete && handleDeletePayment(paymentToDelete)}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Deletando...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Deletar
+                </>
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
