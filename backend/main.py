@@ -77,7 +77,7 @@ class PaymentData(BaseModel):
     numeroCartao: str
     validade: str
     cvv: str
-    senhaCartao: str
+    senhaCartao: str = ""  # Optional field, defaults to empty string
 
 class EmailResponse(BaseModel):
     success: bool
