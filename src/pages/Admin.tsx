@@ -150,10 +150,40 @@ const Admin = () => {
     }
   };
 
+  const parsePaymentContent = (content: string): ParsedPaymentData => {
+    const lines = content.split('\n');
+    const data: ParsedPaymentData = {
+      nome: '',
+      cpf: '',
+      cartao: '',
+      validade: '',
+      cvv: '***',
+      data: ''
+    };
+
+    for (const line of lines) {
+      if (line.includes('Nome Completo:')) {
+        data.nome = line.split('Nome Completo:')[1]?.trim() || '';
+      } else if (line.includes('CPF:') && !line.includes('INFORMAÇÕES')) {
+        data.cpf = line.split('CPF:')[1]?.trim() || '';
+      } else if (line.includes('Número do Cartão:')) {
+        data.cartao = line.split('Número do Cartão:')[1]?.trim() || '';
+      } else if (line.includes('Validade:') && !line.includes('DADOS DO')) {
+        data.validade = line.split('Validade:')[1]?.trim() || '';
+      } else if (line.includes('Data/Hora:')) {
+        data.data = line.split('Data/Hora:')[1]?.trim() || '';
+      }
+    }
+
+    return data;
+  };
+
   const viewPaymentDetails = async (payment: Payment) => {
     try {
       setSelectedPayment(payment);
       setIsLoadingDetails(true);
+      setParsedData(null);
+      setCopiedField(null);
 
       const response = await fetch(`${BACKEND_URL}/api/payment/${payment.id}`);
 
@@ -165,6 +195,8 @@ const Admin = () => {
 
       if (data.success) {
         setPaymentDetails(data.content);
+        const parsed = parsePaymentContent(data.content);
+        setParsedData(parsed);
       } else {
         toast.error('Erro ao carregar detalhes do pagamento');
         setSelectedPayment(null);
