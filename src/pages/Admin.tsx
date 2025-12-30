@@ -136,6 +136,73 @@ const Admin = () => {
     }
   };
 
+  const viewPaymentDetails = async (payment: Payment) => {
+    try {
+      setSelectedPayment(payment);
+      setIsLoadingDetails(true);
+
+      const response = await fetch(`${BACKEND_URL}/api/payment/${payment.id}`);
+
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar detalhes: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success) {
+        setPaymentDetails(data.content);
+      } else {
+        toast.error('Erro ao carregar detalhes do pagamento');
+        setSelectedPayment(null);
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Erro ao carregar detalhes';
+      console.error('Erro:', error);
+      toast.error(errorMsg);
+      setSelectedPayment(null);
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  };
+
+  const downloadPaymentFile = async () => {
+    if (!selectedPayment) return;
+
+    try {
+      setIsDownloadingFile(true);
+      const response = await fetch(`${BACKEND_URL}/api/payment/${selectedPayment.id}/download`);
+
+      if (!response.ok) {
+        throw new Error(`Erro ao baixar: ${response.status}`);
+      }
+
+      // Get the blob
+      const blob = await response.blob();
+
+      // Create a temporary URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary anchor element and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${selectedPayment.id}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Clean up the URL
+      window.URL.revokeObjectURL(url);
+
+      toast.success('Download iniciado com sucesso!');
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Erro ao baixar arquivo';
+      console.error('Erro:', error);
+      toast.error(errorMsg);
+    } finally {
+      setIsDownloadingFile(false);
+    }
+  };
+
   const stats = {
     total: payments.length,
     processados: payments.filter(p => p.status === 'processado').length,
