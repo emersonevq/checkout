@@ -5,8 +5,8 @@
 | Serviço | Porta | URL |
 |---------|-------|-----|
 | **Frontend (React)** | 8081 | http://localhost:8081 |
-| **Backend (FastAPI)** | 6666 | http://localhost:6666 |
-| **Backend Docs (Swagger)** | 6666 | http://localhost:6666/docs |
+| **Backend (FastAPI)** | 5000 | http://localhost:5000 |
+| **Backend Docs (Swagger)** | 5000 | http://localhost:5000/docs |
 
 ---
 
