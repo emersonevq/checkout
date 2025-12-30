@@ -329,7 +329,7 @@ CVV: ***
 async def startup_event():
     """Create necessary directories on startup"""
     create_data_directory()
-    print(f"🚀 Backend iniciado em porta 6666")
+    print(f"🚀 Backend iniciado em porta 5000")
     print(f"📁 Diretório de dados: {DATA_DIR}")
     print(f"📧 Email configurado para: {EMAIL_TO}")
 
