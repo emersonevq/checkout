@@ -442,6 +442,64 @@ const Admin = () => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Payment Details Modal */}
+      <Dialog open={selectedPayment !== null} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedPayment(null);
+          setPaymentDetails('');
+        }
+      }}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Detalhes do Pagamento</DialogTitle>
+            <DialogDescription>
+              {selectedPayment?.nomeCompleto}
+            </DialogDescription>
+          </DialogHeader>
+
+          {isLoadingDetails ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                <p className="text-muted-foreground">Carregando detalhes...</p>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {/* File content preview */}
+              <div className="bg-muted p-4 rounded-lg border border-border">
+                <pre className="text-sm text-foreground whitespace-pre-wrap overflow-auto max-h-96 font-mono">
+                  {paymentDetails}
+                </pre>
+              </div>
+
+              {/* Download button */}
+              <div className="flex justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (selectedPayment) {
+                      setSelectedPayment(null);
+                      setPaymentDetails('');
+                    }
+                  }}
+                >
+                  Fechar
+                </Button>
+                <Button
+                  className="gap-2"
+                  onClick={downloadPaymentFile}
+                  disabled={isDownloadingFile}
+                >
+                  <Download className={`h-4 w-4 ${isDownloadingFile ? 'animate-spin' : ''}`} />
+                  {isDownloadingFile ? 'Baixando...' : 'Baixar TXT'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
