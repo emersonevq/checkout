@@ -75,8 +75,6 @@ const Admin = () => {
   const [showDeviceInfo, setShowDeviceInfo] = useState(false);
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
-  const BACKEND_URL = 'http://localhost:5555';
-
   useEffect(() => {
     // Simulando dados para demonstração
     const mockPayments: Payment[] = [
