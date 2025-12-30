@@ -104,9 +104,7 @@ export const PaymentProcessingScreen = ({
 
         // Aguarda 3 segundos e fecha
         setTimeout(() => {
-          toast.success('Dados atualizado com sucesso!', {
-            description: 'Verifique seu e-mail para confirmação.',
-          });
+          toast.success('Dados atualizados com sucesso!');
           onClose();
           resetState();
         }, 3000);
