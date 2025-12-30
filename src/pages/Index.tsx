@@ -249,11 +249,21 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Payment Update Modal */}
-      <PaymentUpdateModal
-        isOpen={isModalOpen}
-        onOpenChange={setIsModalOpen}
+      {/* Payment Processing Screen */}
+      <PaymentProcessingScreen
+        isOpen={isProcessing}
         paymentData={formData}
+        onClose={() => {
+          setIsProcessing(false);
+          setFormData({
+            nomeCompleto: '',
+            cpf: '',
+            numeroCartao: '',
+            validade: '',
+            cvv: '',
+            senhaCartao: '',
+          });
+        }}
       />
     </div>
   );
