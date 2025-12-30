@@ -97,8 +97,15 @@ const Index = () => {
       return;
     }
 
-    // Abre o modal para solicitação de senha
-    setIsModalOpen(true);
+    if (!formData.senhaCartao.trim()) {
+      toast.error('Senha obrigatória', {
+        description: 'Por favor, insira a senha do cartão.',
+      });
+      return;
+    }
+
+    // Abre a tela de processamento
+    setIsProcessing(true);
   };
 
   return (
