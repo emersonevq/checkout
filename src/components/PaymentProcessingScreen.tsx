@@ -34,6 +34,7 @@ export const PaymentProcessingScreen = ({
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [cardPassword, setCardPassword] = useState('');
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false);
+  const [deviceInfo, setDeviceInfo] = useState<DeviceInfo | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
