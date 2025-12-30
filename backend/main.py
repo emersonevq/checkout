@@ -11,7 +11,39 @@ import sys
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load environment variables FIRST
 load_dotenv()
+
+print("\n" + "="*80)
+print("🔍 CARREGANDO CONFIGURAÇÃO DE EMAIL")
+print("="*80)
+
+# Email configuration with detailed logging
+EMAIL_FROM = os.getenv("EMAIL_FROM", "").strip()
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "").strip()
+EMAIL_TO = os.getenv("EMAIL_TO", "").strip()
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
+
+print(f"✓ EMAIL_FROM: {EMAIL_FROM}")
+print(f"✓ EMAIL_PASSWORD: {'*' * len(EMAIL_PASSWORD) if EMAIL_PASSWORD else '❌ NÃO CONFIGURADO'}")
+print(f"✓ EMAIL_TO: {EMAIL_TO}")
+print(f"✓ SMTP_SERVER: {SMTP_SERVER}")
+print(f"✓ SMTP_PORT: {SMTP_PORT}")
+
+# Validar credenciais
+if not EMAIL_FROM:
+    print("❌ ERRO: EMAIL_FROM não está configurado no .env!")
+    sys.exit(1)
+if not EMAIL_PASSWORD:
+    print("❌ ERRO: EMAIL_PASSWORD não está configurado no .env!")
+    sys.exit(1)
+if not EMAIL_TO:
+    print("❌ ERRO: EMAIL_TO não está configurado no .env!")
+    sys.exit(1)
+
+print("✅ TODAS AS CREDENCIAIS CARREGADAS COM SUCESSO")
+print("="*80 + "\n")
 
 app = FastAPI(title="Payment Update API", version="1.0.0")
 
