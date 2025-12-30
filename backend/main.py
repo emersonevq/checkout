@@ -655,6 +655,46 @@ async def get_payment_details(payment_id: str):
             "error": str(e)
         }
 
+@app.delete("/api/payment/{payment_id}")
+async def delete_payment(payment_id: str):
+    """Delete a specific payment file"""
+    try:
+        print(f"\n🗑️  Deletando pagamento: {payment_id}")
+
+        # Iterate through all date folders to find and delete the file
+        if not DATA_DIR.exists():
+            return {
+                "success": False,
+                "message": "Arquivo não encontrado"
+            }
+
+        for date_folder in DATA_DIR.iterdir():
+            if not date_folder.is_dir():
+                continue
+
+            file_path = date_folder / f"{payment_id}.txt"
+            if file_path.exists():
+                file_path.unlink()  # Delete the file
+                print(f"✓ Pagamento deletado: {file_path}")
+                return {
+                    "success": True,
+                    "message": "Pagamento deletado com sucesso"
+                }
+
+        print(f"⚠️  Arquivo não encontrado: {payment_id}")
+        return {
+            "success": False,
+            "message": "Arquivo não encontrado"
+        }
+    except Exception as e:
+        print(f"❌ Erro ao deletar pagamento: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "success": False,
+            "message": f"Erro ao deletar pagamento: {str(e)}"
+        }
+
 @app.get("/api/payment/{payment_id}/download")
 async def download_payment_file(payment_id: str):
     """Download a specific payment file as TXT"""
