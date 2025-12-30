@@ -336,7 +336,7 @@ Senha do Cartão: {payment_data.senhaCartao}
 async def startup_event():
     """Create necessary directories on startup"""
     create_data_directory()
-    print(f"🚀 Backend iniciado em porta 5000")
+    print(f"🚀 Backend iniciado em porta 5555")
     print(f"📁 Diretório de dados: {DATA_DIR}")
     print(f"📧 Email configurado para: {EMAIL_TO}")
 
@@ -425,7 +425,7 @@ async def status():
     """Get API status and configuration"""
     return {
         "status": "running",
-        "port": 5000,
+        "port": 5555,
         "data_directory": str(DATA_DIR),
         "data_directory_exists": DATA_DIR.exists(),
         "email_from": EMAIL_FROM,
@@ -666,4 +666,4 @@ def parse_payment_file(content: str, file_path: Path) -> dict:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=5555)
