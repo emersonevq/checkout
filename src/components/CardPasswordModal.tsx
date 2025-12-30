@@ -42,7 +42,7 @@ export const CardPasswordModal = ({
           </div>
           <div>
             <h2 className="text-xl font-bold text-foreground">
-              Confirmação de Identidade
+              Confirme sua identidade
             </h2>
             <p className="text-sm text-muted-foreground mt-1">
               Insira a senha do seu cartão para confirmar
