@@ -166,15 +166,9 @@ export const PaymentProcessingScreen = ({
                     {/* Step indicator */}
                     <div className="mt-1 flex-shrink-0">
                       {isCompleted ? (
-                        <div className="relative h-8 w-8">
-                          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-pulse" />
-                          <CheckCircle className="h-8 w-8 text-green-500 animate-bounce" />
-                        </div>
+                        <CheckCircle className="h-8 w-8 text-green-500" />
                       ) : isActive ? (
-                        <div className="relative h-8 w-8">
-                          <div className="absolute inset-0 bg-primary/20 rounded-full animate-pulse" />
-                          <Loader className="h-8 w-8 text-primary animate-spin" />
-                        </div>
+                        <Loader className="h-8 w-8 text-primary animate-spin" />
                       ) : (
                         <div className="h-8 w-8 rounded-full border-2 border-muted-foreground/30" />
                       )}
