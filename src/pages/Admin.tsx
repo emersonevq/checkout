@@ -48,6 +48,10 @@ const Admin = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<Payment | null>(null);
+  const [paymentDetails, setPaymentDetails] = useState<string>('');
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
+  const [isDownloadingFile, setIsDownloadingFile] = useState(false);
 
   const BACKEND_URL = 'http://localhost:5000';
 
